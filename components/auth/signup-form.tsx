@@ -1,9 +1,13 @@
 "use client"
 
-import React from "react"
+import { redirect } from "next/navigation"
+
+import React, { useId, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import { z } from "zod"
+import { toast } from "sonner"
+import { RiLoader4Line } from "@remixicon/react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,6 +19,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+
+import { signUp } from "@/actions/auth"
 
 const passwordRegex =
   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
@@ -46,6 +52,9 @@ const formSchema = z
 type Props = {}
 
 const SignUpForm = (props: Props) => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const toastId = useId()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,8 +65,29 @@ const SignUpForm = (props: Props) => {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    toast.loading("Signing up...", { id: toastId })
+    setLoading(true)
+
+    const formData = new FormData()
+    formData.append("fullName", values.fullName)
+    formData.append("email", values.email)
+    formData.append("password", values.password)
+
+    const { data, success, error } = await signUp(formData)
+    if (!success) {
+      toast.error("Failed to Sign Up", { id: toastId })
+      setLoading(false)
+    } else {
+      toast.success(
+        "Signed up successfully! Please confirm your email address.",
+        {
+          id: toastId,
+        },
+      )
+      setLoading(false)
+      redirect("/login")
+    }
   }
 
   return (
@@ -83,7 +113,7 @@ const SignUpForm = (props: Props) => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="name@example.com" {...field} />
+                <Input type="email" placeholder="name@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -96,7 +126,11 @@ const SignUpForm = (props: Props) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Enter your password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,13 +143,20 @@ const SignUpForm = (props: Props) => {
             <FormItem>
               <FormLabel>Confirm password</FormLabel>
               <FormControl>
-                <Input placeholder="Confirm your password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Confirm your password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Sign Up</Button>
+        <Button type="submit" disabled={loading}>
+          {loading && <RiLoader4Line size={16} className="mr-2 animate-spin" />}
+          Sign Up
+        </Button>
       </form>
     </Form>
   )

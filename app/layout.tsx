@@ -3,6 +3,15 @@ import localFont from "next/font/local"
 import { Geist, Geist_Mono } from "next/font/google"
 import "@/styles/globals.css"
 
+import { Toaster } from "@/components/ui/sonner"
+
+import {
+  RiLoader4Line,
+  RiCheckLine,
+  RiErrorWarningFill,
+  RiInformation2Fill,
+} from "@remixicon/react"
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -55,6 +64,18 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${neueFreigeist.variable} font-sans antialiased`}
       >
         {children}
+        <Toaster
+          theme="light"
+          icons={{
+            success: <RiCheckLine />,
+            error: <RiErrorWarningFill />,
+            info: <RiInformation2Fill />,
+            loading: <RiLoader4Line className="animate-spin" />,
+          }}
+          toastOptions={{
+            className: "rounded-none font-freigeist",
+          }}
+        />
       </body>
     </html>
   )
