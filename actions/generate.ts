@@ -10,45 +10,54 @@ const replicate = new Replicate({
 })
 
 type GenerateImageResponse = {
-  error: string | null
+  error: any | null
   success: boolean
-  data: unknown | null
+  data: string[] | null
 }
 
-export const generateImage = async ({
-  model,
-  prompt,
-  aspect_ratio,
-  num_outputs,
-  num_inference_steps,
-  guidance,
-  output_format,
-  output_quality,
-  go_fast,
-  megapixels,
-}: z.infer<typeof formSchema>) => {
-  const schnellModelInput = {
-    prompt,
-    go_fast,
-    megapixels,
-    num_outputs,
-    aspect_ratio,
-    output_format,
-    output_quality,
-    num_inference_steps,
+export const generateImages = async (
+  values: z.infer<typeof formSchema>,
+): Promise<GenerateImageResponse> => {
+  const modelName = values.model
+  const isFluxDev = modelName === "black-forest-labs/flux-dev"
+  const PROMPT_STRENGTH = 0.8
+
+  const sharedParams = {
+    prompt: values.prompt,
+    go_fast: values.goFast,
+    megapixels: values.megapixels,
+    num_outputs: values.numOfOutputs,
+    aspect_ratio: values.aspectRatio,
+    output_format: values.outputFormat,
+    output_quality: values.outputQuality,
+    num_inference_steps: values.numOfInferenceSteps,
   }
-  const devModelInput = {
-    prompt,
-    go_fast,
-    guidance,
-    megapixels,
-    num_outputs,
-    aspect_ratio,
-    output_format,
-    output_quality,
-    prompt_strength: 0.8,
-    num_inference_steps,
+
+  const modelInputParams = isFluxDev
+    ? {
+        ...sharedParams,
+        guidance: values.guidance,
+        prompt_strength: PROMPT_STRENGTH,
+      }
+    : sharedParams
+
+  // console.log("@DEBUG", modelInput)
+  try {
+    const result = await replicate.run(modelName as `${string}/${string}`, {
+      input: modelInputParams,
+    })
+    // console.log("@ACTION:", result)
+    // We get an array of image url's
+    return {
+      error: null,
+      success: true,
+      data: result as [],
+    }
+  } catch (error: any) {
+    return {
+      error: error.message || "Something went wrong in generateImages",
+      success: false,
+      data: null,
+    }
   }
-  console.log("@SCHNELL", schnellModelInput)
-  console.log("@DEV", devModelInput)
 }

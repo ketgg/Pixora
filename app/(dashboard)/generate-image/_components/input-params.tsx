@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { use, useEffect } from "react"
 
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -38,7 +38,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { generateImage } from "@/actions/generate"
+import { useGeneratedStore } from "@/store/use-generated-store"
 
 type Props = {}
 
@@ -55,14 +55,14 @@ export const formSchema = z
     prompt: z.string({
       required_error: "Prompt is required.",
     }),
-    aspect_ratio: z.string({
+    aspectRatio: z.string({
       required_error: "Aspect ratio is required.",
     }),
-    num_outputs: z
+    numOfOutputs: z
       .number()
       .min(1, { message: "Number of outputs should be at least 1." })
       .max(4, { message: "Number of outputs should be at max 4." }),
-    num_inference_steps: z
+    numOfInferenceSteps: z
       .number()
       .min(1, {
         message: "Number of inference steps should be at least 1.",
@@ -75,14 +75,14 @@ export const formSchema = z
         message: "Guidance can't be greater than 10.",
       })
       .optional(),
-    output_format: z.string({
+    outputFormat: z.string({
       required_error: "Output format is required.",
     }),
-    output_quality: z
+    outputQuality: z
       .number()
       .min(0, { message: "Output quality can't be less than 0." })
       .max(100, { message: "Output quality can't be greater than 100" }),
-    go_fast: z.boolean({
+    goFast: z.boolean({
       required_error: "Go fast flag is required.",
     }),
     megapixels: z.string({
@@ -106,18 +106,20 @@ export const formSchema = z
   )
 
 const InputParams = (props: Props) => {
+  const generateImages = useGeneratedStore((state) => state.generateImages)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       model: "black-forest-labs/flux-schnell",
       prompt: "",
-      aspect_ratio: "1:1",
-      num_outputs: 1,
-      num_inference_steps: 4,
+      aspectRatio: "1:1",
+      numOfOutputs: 1,
+      numOfInferenceSteps: 4,
       guidance: 3.5,
-      output_format: "webp",
-      output_quality: 80,
-      go_fast: true,
+      outputFormat: "webp",
+      outputQuality: 80,
+      goFast: true,
       megapixels: "1",
     },
   })
@@ -129,7 +131,7 @@ const InputParams = (props: Props) => {
         if (value.model === "black-forest-labs/flux-schnell") defaultSteps = 4
         else if (value.model === "black-forest-labs/flux-dev") defaultSteps = 28
         if (defaultSteps !== undefined)
-          form.setValue("num_inference_steps", defaultSteps)
+          form.setValue("numOfInferenceSteps", defaultSteps)
       }
     })
     return () => subscription.unsubscribe()
@@ -142,7 +144,7 @@ const InputParams = (props: Props) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    await generateImage(values)
+    await generateImages(values)
   }
   return (
     <Form {...form}>
@@ -244,7 +246,7 @@ const InputParams = (props: Props) => {
         />
         <FormField
           control={form.control}
-          name="aspect_ratio"
+          name="aspectRatio"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
@@ -286,7 +288,7 @@ const InputParams = (props: Props) => {
         />
         <FormField
           control={form.control}
-          name="num_outputs"
+          name="numOfOutputs"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
@@ -324,7 +326,7 @@ const InputParams = (props: Props) => {
         />
         <FormField
           control={form.control}
-          name="num_inference_steps"
+          name="numOfInferenceSteps"
           render={({ field }) => {
             const selectedModel = form.watch("model")
             const isDevModel = selectedModel === "black-forest-labs/flux-dev"
@@ -420,7 +422,7 @@ const InputParams = (props: Props) => {
         />
         <FormField
           control={form.control}
-          name="output_format"
+          name="outputFormat"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
@@ -455,7 +457,7 @@ const InputParams = (props: Props) => {
         />
         <FormField
           control={form.control}
-          name="output_quality"
+          name="outputQuality"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
@@ -497,7 +499,7 @@ const InputParams = (props: Props) => {
         />
         <FormField
           control={form.control}
-          name="go_fast"
+          name="goFast"
           render={({ field }) => (
             <FormItem className="">
               <FormLabel className="flex items-center gap-1.5 font-mono">
