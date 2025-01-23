@@ -27,7 +27,7 @@ const formSchema = z.object({
     message: "Enter a valid email address!",
   }),
   password: z.string().min(8, {
-    message: "Password must be atleast 8 characters long.",
+    message: "Password must be at least 8 characters long.",
   }),
 })
 
@@ -62,7 +62,7 @@ const SignInForm = (props: Props) => {
         id: toastId,
       })
       setLoading(false)
-      redirect("/dashboard")
+      redirect("/home")
     }
   }
 

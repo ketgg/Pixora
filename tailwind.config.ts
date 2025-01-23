@@ -13,8 +13,8 @@ export default {
         xs: "360px",
       },
       fontFamily: {
-        sans: "var(--font-geist-sans)",
-        mono: "var(--font-geist-mono)",
+        sans: "var(--font-basier-square)",
+        mono: "var(--font-jetbrains-mono)",
         freigeist: "var(--font-neue-freigeist)",
       },
       colors: {

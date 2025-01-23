@@ -4,7 +4,7 @@ import SignOutBtn from "@/components/auth/sign-out-btn"
 
 type Props = {}
 
-const Dashboard = (props: Props) => {
+const Home = (props: Props) => {
   return (
     <div>
       Dashboard <SignOutBtn />
@@ -12,4 +12,4 @@ const Dashboard = (props: Props) => {
   )
 }
 
-export default Dashboard
+export default Home
