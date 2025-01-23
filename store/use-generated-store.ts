@@ -1,7 +1,8 @@
 import { create } from "zustand"
-import { string, z } from "zod"
+import { z } from "zod"
 import { formSchema } from "@/app/(dashboard)/generate-image/_components/input-params"
 import { generateImages as generateImagesAction } from "@/actions/generate"
+import { storeImages } from "@/actions/store-images"
 
 type GeneratedState = {
   loading: boolean
@@ -25,8 +26,16 @@ export const useGeneratedStore = create<GeneratedState>((set) => ({
       }
       console.log({ error, success, data })
 
-      if (data) set({ images: data.map((url: string) => ({ url })) })
+      let dataWithUrl
+      if (data) {
+        dataWithUrl = data.map((url: string) => {
+          return { url, ...values }
+        })
+        set({ images: dataWithUrl })
+      }
       set({ loading: false })
+
+      if (dataWithUrl) await storeImages(dataWithUrl)
     } catch (error: any) {
       console.error("Error in generateImages:", error)
       set({

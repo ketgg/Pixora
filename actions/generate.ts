@@ -18,7 +18,7 @@ type GenerateImageResponse = {
 export const generateImages = async (
   values: z.infer<typeof formSchema>,
 ): Promise<GenerateImageResponse> => {
-  const modelName = values.model
+  const modelName = values.modelName
   const isFluxDev = modelName === "black-forest-labs/flux-dev"
   const PROMPT_STRENGTH = 0.8
 
@@ -41,7 +41,7 @@ export const generateImages = async (
       }
     : sharedParams
 
-  // console.log("@DEBUG", modelInput)
+  // console.log("@DEBUG", modelInputParams)
   try {
     const result = await replicate.run(modelName as `${string}/${string}`, {
       input: modelInputParams,

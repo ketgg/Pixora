@@ -11,8 +11,7 @@ import {
   RiFileImageLine,
   RiHashtag,
   RiLandscapeLine,
-  RiMenuLine,
-  RiTextBlock,
+  RiLoader4Line,
   RiTextSnippet,
 } from "@remixicon/react"
 
@@ -49,7 +48,7 @@ const recommendedInferenceSteps: Record<string, string> = {
 
 export const formSchema = z
   .object({
-    model: z.string({
+    modelName: z.string({
       required_error: "Model is required.",
     }),
     prompt: z.string({
@@ -92,7 +91,7 @@ export const formSchema = z
   .refine(
     (data) => {
       if (
-        data.model === "black-forest-labs/flux-dev" &&
+        data.modelName === "black-forest-labs/flux-dev" &&
         data.guidance === undefined
       )
         return false
@@ -107,11 +106,12 @@ export const formSchema = z
 
 const InputParams = (props: Props) => {
   const generateImages = useGeneratedStore((state) => state.generateImages)
+  const loading = useGeneratedStore((state) => state.loading)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      model: "black-forest-labs/flux-schnell",
+      modelName: "black-forest-labs/flux-schnell",
       prompt: "",
       aspectRatio: "1:1",
       numOfOutputs: 1,
@@ -126,10 +126,12 @@ const InputParams = (props: Props) => {
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
-      if (name === "model") {
+      if (name === "modelName") {
         let defaultSteps
-        if (value.model === "black-forest-labs/flux-schnell") defaultSteps = 4
-        else if (value.model === "black-forest-labs/flux-dev") defaultSteps = 28
+        if (value.modelName === "black-forest-labs/flux-schnell")
+          defaultSteps = 4
+        else if (value.modelName === "black-forest-labs/flux-dev")
+          defaultSteps = 28
         if (defaultSteps !== undefined)
           form.setValue("numOfInferenceSteps", defaultSteps)
       }
@@ -161,7 +163,7 @@ const InputParams = (props: Props) => {
       >
         <FormField
           control={form.control}
-          name="model"
+          name="modelName"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
@@ -328,7 +330,7 @@ const InputParams = (props: Props) => {
           control={form.control}
           name="numOfInferenceSteps"
           render={({ field }) => {
-            const selectedModel = form.watch("model")
+            const selectedModel = form.watch("modelName")
             const isDevModel = selectedModel === "black-forest-labs/flux-dev"
             const recommendedSteps =
               recommendedInferenceSteps[selectedModel] || "-"
@@ -376,7 +378,7 @@ const InputParams = (props: Props) => {
           control={form.control}
           name="guidance"
           render={({ field }) => {
-            const selectedModel = form.watch("model")
+            const selectedModel = form.watch("modelName")
             const isDevModel = selectedModel === "black-forest-labs/flux-dev"
             return (
               <FormItem>
@@ -560,7 +562,10 @@ const InputParams = (props: Props) => {
           <Button type="button" onClick={handleReset} variant="outline">
             Reset
           </Button>
-          <Button type="submit">Run</Button>
+          <Button disabled={loading} type="submit">
+            {loading && <RiLoader4Line className="animate-spin" />}
+            {loading ? "Running" : "Run"}
+          </Button>
         </div>
       </form>
     </Form>
