@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
 
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -38,88 +38,82 @@ import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 
+import { generateImage } from "@/actions/generate"
+
 type Props = {}
-
-// const input = {
-//   prompt: "black forest gateau cake spelling out the words \"FLUX SCHNELL\", tasty, food photography, dynamic shot",
-//   go_fast: true,
-//   megapixels: "1",
-//   num_outputs: 1,
-//   aspect_ratio: "1:1",
-//   output_format: "webp",
-//   output_quality: 80,
-//   num_inference_steps: 4
-// };
-
-// input = {
-//   prompt: "black forest gateau cake spelling out the words \"FLUX DEV\", tasty, food photography, dynamic shot",
-//   go_fast: true,
-//   guidance: 3.5,
-//   megapixels: "1",
-//   num_outputs: 1,
-//   aspect_ratio: "1:1",
-//   output_format: "webp",
-//   output_quality: 80,
-//   num_inference_steps: 28
-// };
 
 const recommendedInferenceSteps: Record<string, string> = {
   "black-forest-labs/flux-dev": "28-50",
   "black-forest-labs/flux-schnell": "3-4",
 }
 
-const formSchema = z.object({
-  model: z.string({
-    required_error: "Model is required.",
-  }),
-  prompt: z.string({
-    required_error: "Prompt is required.",
-  }),
-  aspect_ratio: z.string({
-    required_error: "Aspect ratio is required.",
-  }),
-  num_outputs: z
-    .number()
-    .min(1, { message: "Number of outputs should be at least 1." })
-    .max(4, { message: "Number of outputs should be at max 4." }),
-  num_inference_steps: z
-    .number()
-    .min(1, {
-      message: "Number of inference steps should be at least 1.",
-    })
-    .max(50, { message: "Number of inference steps should be at max 50." }),
-  guidance: z
-    .number({
-      required_error: "Guidance scale is required.",
-    })
-    .min(0, { message: "Guidance can't be less than 0." })
-    .max(10, {
-      message: "Guidance can't be greater than 10.",
+export const formSchema = z
+  .object({
+    model: z.string({
+      required_error: "Model is required.",
     }),
-  output_format: z.string({
-    required_error: "Output format is required.",
-  }),
-  output_quality: z
-    .number()
-    .min(0, { message: "Output quality can't be less than 0." })
-    .max(100, { message: "Output quality can't be greater than 100" }),
-  go_fast: z.boolean({
-    required_error: "Go fast flag is required.",
-  }),
-  megapixels: z.string({
-    required_error: "Megapixels is required.",
-  }),
-})
+    prompt: z.string({
+      required_error: "Prompt is required.",
+    }),
+    aspect_ratio: z.string({
+      required_error: "Aspect ratio is required.",
+    }),
+    num_outputs: z
+      .number()
+      .min(1, { message: "Number of outputs should be at least 1." })
+      .max(4, { message: "Number of outputs should be at max 4." }),
+    num_inference_steps: z
+      .number()
+      .min(1, {
+        message: "Number of inference steps should be at least 1.",
+      })
+      .max(50, { message: "Number of inference steps should be at max 50." }),
+    guidance: z
+      .number()
+      .min(0, { message: "Guidance can't be less than 0." })
+      .max(10, {
+        message: "Guidance can't be greater than 10.",
+      })
+      .optional(),
+    output_format: z.string({
+      required_error: "Output format is required.",
+    }),
+    output_quality: z
+      .number()
+      .min(0, { message: "Output quality can't be less than 0." })
+      .max(100, { message: "Output quality can't be greater than 100" }),
+    go_fast: z.boolean({
+      required_error: "Go fast flag is required.",
+    }),
+    megapixels: z.string({
+      required_error: "Megapixels is required.",
+    }),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.model === "black-forest-labs/flux-dev" &&
+        data.guidance === undefined
+      )
+        return false
+
+      return true
+    },
+    {
+      path: ["guidance"],
+      message: "Guidance is required for black-forest-labs/flux-dev model.",
+    },
+  )
 
 const InputParams = (props: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      model: "black-forest-labs/flux-dev",
+      model: "black-forest-labs/flux-schnell",
       prompt: "",
       aspect_ratio: "1:1",
       num_outputs: 1,
-      num_inference_steps: 28,
+      num_inference_steps: 4,
       guidance: 3.5,
       output_format: "webp",
       output_quality: 80,
@@ -128,14 +122,27 @@ const InputParams = (props: Props) => {
     },
   })
 
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "model") {
+        let defaultSteps
+        if (value.model === "black-forest-labs/flux-schnell") defaultSteps = 4
+        else if (value.model === "black-forest-labs/flux-dev") defaultSteps = 28
+        if (defaultSteps !== undefined)
+          form.setValue("num_inference_steps", defaultSteps)
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [form])
+
   const handleReset = () => {
     form.reset() // Reset to default values
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    await generateImage(values)
   }
   return (
     <Form {...form}>
@@ -176,11 +183,11 @@ const InputParams = (props: Props) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="black-forest-labs/flux-dev">
-                    black-forest-labs/flux-dev
-                  </SelectItem>
                   <SelectItem value="black-forest-labs/flux-schnell">
                     black-forest-labs/flux-schnell
+                  </SelectItem>
+                  <SelectItem value="black-forest-labs/flux-dev">
+                    black-forest-labs/flux-dev
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -320,6 +327,7 @@ const InputParams = (props: Props) => {
           name="num_inference_steps"
           render={({ field }) => {
             const selectedModel = form.watch("model")
+            const isDevModel = selectedModel === "black-forest-labs/flux-dev"
             const recommendedSteps =
               recommendedInferenceSteps[selectedModel] || "-"
             return (
@@ -336,7 +344,7 @@ const InputParams = (props: Props) => {
                     <Input
                       type="number"
                       min={1}
-                      max={50}
+                      max={isDevModel ? 50 : 4}
                       step={1}
                       {...field}
                       className="max-w-20"
@@ -345,7 +353,7 @@ const InputParams = (props: Props) => {
                     <Slider
                       defaultValue={[field.value]}
                       min={1}
-                      max={50}
+                      max={isDevModel ? 50 : 4}
                       step={1}
                       value={[field.value]}
                       onValueChange={(value) => field.onChange(value[0])}
@@ -365,40 +373,50 @@ const InputParams = (props: Props) => {
         <FormField
           control={form.control}
           name="guidance"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex items-center gap-1.5 font-mono">
-                <RiHashtag size={16} />
-                <span>{field.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {typeof field.value}
-                </span>
-              </FormLabel>
-              <FormControl>
-                <div className="flex items-center gap-4">
-                  <Input
-                    type="number"
-                    min={0}
-                    max={10}
-                    step={0.01}
-                    {...field}
-                    className="max-w-20"
-                    onChange={(event) => field.onChange(+event.target.value)}
-                  />
-                  <Slider
-                    defaultValue={[field.value]}
-                    min={0}
-                    max={10}
-                    step={0.01}
-                    value={[field.value]}
-                    onValueChange={(value) => field.onChange(value[0])}
-                  />
-                </div>
-              </FormControl>
-              <FormDescription>Guidance for generated image.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const selectedModel = form.watch("model")
+            const isDevModel = selectedModel === "black-forest-labs/flux-dev"
+            return (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1.5 font-mono">
+                  <RiHashtag size={16} />
+                  <span>{field.name}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {typeof field.value}
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      disabled={!isDevModel}
+                      type="number"
+                      min={0}
+                      max={10}
+                      step={0.01}
+                      {...field}
+                      className="max-w-20"
+                      onChange={(event) => field.onChange(+event.target.value)}
+                    />
+                    <Slider
+                      disabled={!isDevModel}
+                      defaultValue={[field.value || 0]}
+                      min={0}
+                      max={10}
+                      step={0.01}
+                      value={[field.value || 0]}
+                      onValueChange={(value) => field.onChange(value[0])}
+                    />
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  {isDevModel
+                    ? "Guidance for generated image."
+                    : "Guidance is not required for this model."}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
         />
         <FormField
           control={form.control}

@@ -101,7 +101,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${neueFreigeist.variable} ${basierSquare.variable} ${jetBrainsMono.variable} min-w-80 font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${neueFreigeist.variable} ${basierSquare.variable} ${jetBrainsMono.variable} mx-auto min-w-80 max-w-[120rem] font-sans antialiased`}
       >
         <NextTopLoader
           color="#101010"
