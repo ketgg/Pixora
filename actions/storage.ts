@@ -5,6 +5,7 @@ import { randomUUID } from "crypto"
 
 import { createClient } from "@/lib/supabase/server"
 import { Database } from "@/types/database"
+import { revalidatePath } from "next/cache"
 
 export type StoreImagesDataType =
   (Database["public"]["Tables"]["GeneratedImages"]["Insert"] & {
@@ -92,5 +93,95 @@ export const storeImages = async (data: StoreImagesDataType) => {
     error: null,
     success: true,
     data: { results: uploadResults },
+  }
+}
+
+export const getImages = async (limit?: number) => {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    return {
+      error: "Unauthenticated",
+      success: false,
+      data: null,
+    }
+  }
+
+  let query = supabase
+    .from("GeneratedImages")
+    .select("*")
+    .eq("userId", user.id)
+    .order("createdAt", { ascending: false })
+
+  if (limit) query = query.limit(limit)
+
+  const { data: queryData, error: queryError } = await query
+
+  if (queryError) {
+    return {
+      error: queryError.message || "Failed to get the generated images",
+      success: false,
+      data: null,
+    }
+  }
+
+  const imgWithUrls = await Promise.all(
+    queryData.map(
+      async (img: Database["public"]["Tables"]["GeneratedImages"]["Row"]) => {
+        const { data } = await supabase.storage
+          .from("GeneratedImages")
+          .createSignedUrl(`${user.id}/${img.imageName}`, 3600)
+
+        return {
+          ...img,
+          url: data?.signedUrl,
+        }
+      },
+    ),
+  )
+
+  return {
+    error: null,
+    success: true,
+    data: imgWithUrls,
+  }
+}
+
+export const deleteImage = async (id: string, imageName: string) => {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) {
+    return {
+      error: "Unauthenticated",
+      success: false,
+      data: null,
+    }
+  }
+
+  const { data: dbData, error: dbError } = await supabase
+    .from("GeneratedImages")
+    .delete()
+    .eq("id", id)
+  if (dbError) {
+    return {
+      error: dbError.message,
+      success: false,
+      data: null,
+    }
+  }
+
+  await supabase.storage
+    .from("GeneratedImages")
+    .remove([`${user.id}/${imageName}`])
+
+  revalidatePath(`/dashboard/gallery`)
+  return {
+    error: null,
+    success: true,
+    data: dbData,
   }
 }

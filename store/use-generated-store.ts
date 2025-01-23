@@ -1,8 +1,11 @@
 import { create } from "zustand"
 import { z } from "zod"
+import { toast } from "sonner"
+import { randomUUID } from "crypto"
+
 import { formSchema } from "@/app/(dashboard)/generate-image/_components/input-params"
 import { generateImages as generateImagesAction } from "@/actions/generate"
-import { storeImages } from "@/actions/store-images"
+import { storeImages } from "@/actions/storage"
 
 type GeneratedState = {
   loading: boolean
@@ -18,7 +21,12 @@ export const useGeneratedStore = create<GeneratedState>((set) => ({
 
   generateImages: async (values: z.infer<typeof formSchema>) => {
     set({ loading: true, error: null })
+    const toastId = values.prompt
     try {
+      toast.loading(
+        `Generating ${values.numOfOutputs > 1 ? "images" : "image"}...`,
+        { id: toastId },
+      )
       const { error, success, data } = await generateImagesAction(values)
       if (!success) {
         set({ error: error, loading: false })
@@ -32,6 +40,10 @@ export const useGeneratedStore = create<GeneratedState>((set) => ({
           return { url, ...values }
         })
         set({ images: dataWithUrl })
+        toast.success(
+          `${values.numOfOutputs > 1 ? "Images" : "Image"} generated successfully!`,
+          { id: toastId },
+        )
       }
       set({ loading: false })
 
@@ -41,6 +53,9 @@ export const useGeneratedStore = create<GeneratedState>((set) => ({
       set({
         error: "Failed to generate image(s). Please try again later",
         loading: false,
+      })
+      toast.error("Something went wrong. Please try again later.", {
+        id: toastId,
       })
     }
   },
