@@ -4,6 +4,8 @@ import Replicate from "replicate"
 import { createClient } from "@/lib/supabase/server"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 
+import { REPLICATE_USERNAME } from "@/constants/replicate"
+
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 })
@@ -44,7 +46,7 @@ export const POST = async (request: NextRequest) => {
 
     // Create Model in Replicate
     const modelId = `${user.id}_${Date.now()}_${inputParams.modelName.toLowerCase().replaceAll(" ", "-")}`
-    await replicate.models.create("ketgg", modelId, {
+    await replicate.models.create(REPLICATE_USERNAME, modelId, {
       visibility: "private",
       hardware: "gpu-a100-large",
     })
@@ -55,7 +57,7 @@ export const POST = async (request: NextRequest) => {
       "f754b6d9684dd83291baa1a7f417bbc176ff5515a2a4d45930ed73a075876d4b",
       {
         // You need to create a model on Replicate that will be the destination for the trained version.
-        destination: `ketgg/${modelId}`,
+        destination: `${REPLICATE_USERNAME}/${modelId}`,
         input: {
           steps: inputParams.steps || 1000,
           lora_rank: inputParams.loraRank || 16,
