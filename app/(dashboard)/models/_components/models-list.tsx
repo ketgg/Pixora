@@ -75,9 +75,9 @@ const ModelsList = ({ modelsData }: Props) => {
         render={(model) => {
           const status = model.trainingStatus
           return (
-            <Card className="w-full rounded-lg shadow-none">
-              <CardHeader className="pb-4">
-                <CardTitle className="font-freigeisttext-xl flex items-center justify-between">
+            <Card className="flex w-full flex-col gap-4 rounded-lg p-4 shadow-none">
+              <CardHeader className="flex flex-col gap-0 space-y-0 p-0">
+                <CardTitle className="flex items-center justify-between font-freigeist text-xl">
                   {model.modelName}
                   <div className="flex items-center gap-2">
                     {status && (
@@ -111,18 +111,18 @@ const ModelsList = ({ modelsData }: Props) => {
                     </DeleteModelDialog>
                   </div>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-sm">
                   Created{" "}
                   {formatDistance(new Date(model.createdAt), new Date(), {
                     addSuffix: true,
                   })}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="gap flex flex-col gap-0.5 bg-muted px-4 py-3">
+              <CardContent className="p-0">
+                <div className="gap flex flex-col gap-1.5 bg-muted px-4 py-3">
                   <div className="flex items-center gap-1 text-sm text-muted-foreground">
                     <RiTimeLine size={16} />
-                    <span>Training Duration</span>
+                    <span className="font-mono text-xs">Training Duration</span>
                   </div>
                   <p className="font-mono text-sm">
                     {Math.round(Number(model.trainingTime)) / 60 || NaN} mins

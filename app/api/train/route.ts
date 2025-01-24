@@ -11,7 +11,7 @@ const replicate = new Replicate({
 })
 
 const SITE_URL =
-  process.env.PIXORA_SITE_URL || "https://749f-103-37-201-226.ngrok-free.app/"
+  process.env.PIXORA_SITE_URL || "https://749f-103-37-201-226.ngrok-free.app"
 
 export const POST = async (request: NextRequest) => {
   try {
@@ -75,7 +75,7 @@ export const POST = async (request: NextRequest) => {
           layers_to_optimize_regex: inputParams.layersToOptimizeRegex || "",
           gradient_checkpointing: inputParams.gradientCheckpointing || false,
         },
-        webhook: `${SITE_URL}/api/webhooks/training`,
+        webhook: `${SITE_URL}/api/webhooks/training?userId=${user.id}&modelName=${encodeURIComponent(modelId)}&fileName=${encodeURIComponent(fileName)}`,
         webhook_events_filter: ["completed"],
       },
     )
