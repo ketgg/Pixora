@@ -63,6 +63,84 @@ export type Database = {
         }
         Relationships: []
       }
+      Models: {
+        Row: {
+          autocaptionPrefix: string | null
+          autocaptions: boolean | null
+          autocaptionSuffix: string | null
+          cacheLatentsToDisk: boolean | null
+          captionDropoutRate: number | null
+          createdAt: string
+          gradientCheckpointing: boolean | null
+          id: number
+          layersToOptimizeRegex: string | null
+          learningRate: number | null
+          loraRank: number | null
+          modelId: string | null
+          modelName: string | null
+          optimizer: string | null
+          resolution: string | null
+          trainingBatchSize: number | null
+          trainingId: string | null
+          trainingStatus: Database["public"]["Enums"]["TRAINING_STATUS"] | null
+          trainingSteps: number | null
+          trainingTime: string | null
+          triggerWord: string | null
+          userId: string | null
+          VERSION: string | null
+        }
+        Insert: {
+          autocaptionPrefix?: string | null
+          autocaptions?: boolean | null
+          autocaptionSuffix?: string | null
+          cacheLatentsToDisk?: boolean | null
+          captionDropoutRate?: number | null
+          createdAt?: string
+          gradientCheckpointing?: boolean | null
+          id?: never
+          layersToOptimizeRegex?: string | null
+          learningRate?: number | null
+          loraRank?: number | null
+          modelId?: string | null
+          modelName?: string | null
+          optimizer?: string | null
+          resolution?: string | null
+          trainingBatchSize?: number | null
+          trainingId?: string | null
+          trainingStatus?: Database["public"]["Enums"]["TRAINING_STATUS"] | null
+          trainingSteps?: number | null
+          trainingTime?: string | null
+          triggerWord?: string | null
+          userId?: string | null
+          VERSION?: string | null
+        }
+        Update: {
+          autocaptionPrefix?: string | null
+          autocaptions?: boolean | null
+          autocaptionSuffix?: string | null
+          cacheLatentsToDisk?: boolean | null
+          captionDropoutRate?: number | null
+          createdAt?: string
+          gradientCheckpointing?: boolean | null
+          id?: never
+          layersToOptimizeRegex?: string | null
+          learningRate?: number | null
+          loraRank?: number | null
+          modelId?: string | null
+          modelName?: string | null
+          optimizer?: string | null
+          resolution?: string | null
+          trainingBatchSize?: number | null
+          trainingId?: string | null
+          trainingStatus?: Database["public"]["Enums"]["TRAINING_STATUS"] | null
+          trainingSteps?: number | null
+          trainingTime?: string | null
+          triggerWord?: string | null
+          userId?: string | null
+          VERSION?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -71,7 +149,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      TRAINING_STATUS:
+        | "STARTING"
+        | "PROCESSING"
+        | "SUCCEEDED"
+        | "FAILED"
+        | "CANCELED"
     }
     CompositeTypes: {
       [_ in never]: never

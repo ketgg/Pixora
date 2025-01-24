@@ -8,6 +8,9 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 })
 
+const SITE_URL =
+  process.env.PIXORA_SITE_URL || "https://749f-103-37-201-226.ngrok-free.app/"
+
 export const POST = async (request: NextRequest) => {
   try {
     if (!process.env.REPLICATE_API_TOKEN) {
@@ -23,7 +26,7 @@ export const POST = async (request: NextRequest) => {
     }
 
     const inputParams = await request.json()
-    console.log(inputParams)
+    // console.log("@INPUT_PARAMS", inputParams)
     if (!inputParams.fileKey || !inputParams.modelName) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -60,16 +63,48 @@ export const POST = async (request: NextRequest) => {
           batch_size: inputParams.batchSize || 1,
           resolution: inputParams.resolution || "512,768,1024",
           autocaption: inputParams.autocaption || true,
+          autocaption_prefix: inputParams.autocaptionPrefix,
+          autocaption_suffix: inputParams.autocaptionSuffix,
           input_images: fileUrl.signedUrl,
           trigger_word: inputParams.triggerWord || "TOK",
           learning_rate: inputParams.learningRate || 0.0004,
           caption_dropout_rate: inputParams.captionDropoutRate || 0.05,
           cache_latents_to_disk: inputParams.cacheLatentsToDisk || false,
+          layers_to_optimize_regex: inputParams.layersToOptimizeRegex || "",
           gradient_checkpointing: inputParams.gradientCheckpointing || false,
         },
+        webhook: `${SITE_URL}/api/webhooks/training`,
+        webhook_events_filter: ["completed"],
       },
     )
-    console.log(training)
+    // console.log("@TRAINING_DATA", training)
+
+    // Add model to database
+    const dbRes = await supabaseAdmin.from("Models").insert({
+      userId: user.id,
+      modelId: modelId,
+      modelName: inputParams.modelName,
+      triggerWord: inputParams.triggerWord || "TOK",
+      autocaption: inputParams.autocaption || true,
+      autocaptionPrefix: inputParams.autocaptionPrefix || "",
+      autocaptionSuffix: inputParams.autocaptionSuffix || "",
+      trainingSteps: inputParams.steps || 1000,
+      trainingBatchSize: inputParams.batchSize || 1,
+      learningRate: inputParams.learningRate || 0.0004,
+      loraRank: inputParams.loraRank || 16,
+      resolution: inputParams.resolution || "512,768,1024",
+      captionDropoutRate: inputParams.captionDropoutRate || 0.05,
+      optimizer: inputParams.optimizer || "adamw8bit",
+      cacheLatentsToDisk: inputParams.cacheLatentsToDisk || false,
+      layersToOptimizeRegex: inputParams.layersToOptimizeRegex || "",
+      gradientCheckpointing: inputParams.gradientCheckpointing || false,
+      trainingId: training.id,
+      trainingStatus: training.status.toUpperCase(),
+    })
+    // console.log("@DB_RES", dbRes)
+    if (dbRes.error) {
+      throw new Error("Failed to upload model details in the database")
+    }
 
     return NextResponse.json({ success: true }, { status: 201 })
   } catch (error) {
