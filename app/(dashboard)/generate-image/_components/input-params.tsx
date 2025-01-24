@@ -169,7 +169,7 @@ const InputParams = (props: Props) => {
               <FormLabel className="flex items-center gap-1.5 font-mono">
                 <RiBox3Line size={16} />
                 <span>
-                  {field.name}
+                  model_name
                   <sup className="text-destructive">*</sup>
                 </span>
                 <span className="text-xs text-muted-foreground">
@@ -211,7 +211,7 @@ const InputParams = (props: Props) => {
                 <div className="flex items-center gap-1.5">
                   <RiTextSnippet size={16} />
                   <span>
-                    {field.name}
+                    prompt
                     <sup className="text-destructive">*</sup>
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -253,7 +253,7 @@ const InputParams = (props: Props) => {
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
                 <RiAspectRatioLine size={16} />
-                <span>{field.name}</span>
+                <span>aspect_ratio</span>
                 <span className="text-xs text-muted-foreground">
                   {typeof field.value}
                 </span>
@@ -283,6 +283,8 @@ const InputParams = (props: Props) => {
               </Select>
               <FormDescription>
                 Aspect ratio for the generated image.
+                <br />
+                <span className="font-semibold">Default: "1:1"</span>
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -295,10 +297,8 @@ const InputParams = (props: Props) => {
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
                 <RiHashtag size={16} />
-                <span>{field.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {typeof field.value}
-                </span>
+                <span>num_outputs</span>
+                <span className="text-xs text-muted-foreground">integer</span>
               </FormLabel>
               <FormControl>
                 <div className="flex items-center gap-4">
@@ -321,7 +321,11 @@ const InputParams = (props: Props) => {
                   />
                 </div>
               </FormControl>
-              <FormDescription>Number of outputs to generate.</FormDescription>
+              <FormDescription>
+                Number of outputs to generate.
+                <br />
+                <span className="font-semibold">Default: 1</span>
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -338,10 +342,8 @@ const InputParams = (props: Props) => {
               <FormItem>
                 <FormLabel className="flex items-center gap-1.5 font-mono">
                   <RiHashtag size={16} />
-                  <span>{field.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {typeof field.value}
-                  </span>
+                  <span>num_inference_steps</span>
+                  <span className="text-xs text-muted-foreground">integer</span>
                 </FormLabel>
                 <FormControl>
                   <div className="flex items-center gap-4">
@@ -368,6 +370,10 @@ const InputParams = (props: Props) => {
                   Number of denoising steps. Recommended range is{" "}
                   {recommendedSteps}, and lower number of steps produce lower
                   quality outputs, faster.
+                  <br />
+                  <span className="font-semibold">
+                    Default: {isDevModel ? 28 : 4}{" "}
+                  </span>
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -416,6 +422,8 @@ const InputParams = (props: Props) => {
                   {isDevModel
                     ? "Guidance for generated image."
                     : "Guidance is not required for this model."}
+                  <br />
+                  <span className="font-semibold">Default: 3.5</span>
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -429,7 +437,7 @@ const InputParams = (props: Props) => {
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
                 <RiFileImageLine size={16} />
-                <span>{field.name}</span>
+                <span>output_format</span>
                 <span className="text-xs text-muted-foreground">
                   {typeof field.value}
                 </span>
@@ -452,6 +460,8 @@ const InputParams = (props: Props) => {
               </Select>
               <FormDescription>
                 {`Format of the output image(s)`}
+                <br />
+                <span className="font-semibold">Default: "webp"</span>
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -464,10 +474,8 @@ const InputParams = (props: Props) => {
             <FormItem>
               <FormLabel className="flex items-center gap-1.5 font-mono">
                 <RiHashtag size={16} />
-                <span>{field.name}</span>
-                <span className="text-xs text-muted-foreground">
-                  {typeof field.value}
-                </span>
+                <span>output_quality</span>
+                <span className="text-xs text-muted-foreground">integer</span>
               </FormLabel>
               <FormControl>
                 <div className="flex items-center gap-4">
@@ -494,6 +502,8 @@ const InputParams = (props: Props) => {
                 Quality when saving the output images, from 0 to 100. 100 is
                 best quality, 0 is lowest quality. Not relevant for .png
                 outputs.
+                <br />
+                <span className="font-semibold">Default: 80</span>
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -511,7 +521,7 @@ const InputParams = (props: Props) => {
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <span>{field.name}</span>
+                <span>go_fast</span>
                 <span className="text-xs text-muted-foreground">
                   {typeof field.value}
                 </span>
@@ -520,6 +530,8 @@ const InputParams = (props: Props) => {
                 {
                   "Run faster predictions with model optimized for speed (currently fp8 quantized); disable to run in original bf16"
                 }
+                <br />
+                <span className="font-semibold">Default: true</span>
               </FormDescription>
             </FormItem>
           )}
@@ -553,6 +565,8 @@ const InputParams = (props: Props) => {
               </Select>
               <FormDescription>
                 Approximate number of megapixels for generated image.
+                <br />
+                <span className="font-semibold">Default: "1"</span>
               </FormDescription>
               <FormMessage />
             </FormItem>
