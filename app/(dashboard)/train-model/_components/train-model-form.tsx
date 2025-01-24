@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
-
+import React, { useEffect, useRef, useState, useId } from "react"
+import { toast } from "sonner"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -37,6 +37,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { getPreSignedStorageUrl } from "@/actions/storage"
 
 const VALID_ZIP_FILES = ["application/x-zip-compressed", "application/zip"]
 const MAX_FILE_SIZE = 45 * 1024 * 1024
@@ -148,11 +149,69 @@ const TrainModelForm = (props: Props) => {
     form.reset()
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const toastId = useId()
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    toast.loading("Uploading training data...", { id: toastId })
+    try {
+      const data = await getPreSignedStorageUrl(values.zipFile.name)
+      // console.log("@SIGNED_URL", data)
+      if (data.error) {
+        toast.error(data.error || "Failed to get the upload URL.", {
+          id: toastId,
+        })
+        return
+      }
+
+      // Upload the file using presigned URL
+      const urlResponse = await fetch(data.signedUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": values.zipFile.type,
+        },
+        body: values.zipFile,
+      })
+
+      if (!urlResponse.ok) {
+        throw new Error("Upload Failed.")
+      }
+
+      const res = await urlResponse.json()
+      toast.success("Training data uploaded successfully!", {
+        id: toastId,
+      })
+
+      const apiData = {
+        fileKey: res.Key,
+        ...values,
+      }
+      const apiResponse = await fetch("/api/train", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Set the content type to JSON
+        },
+        body: JSON.stringify(apiData),
+      })
+
+      const apiResult = await apiResponse.json()
+      if (!apiResponse.ok || apiResult?.error) {
+        throw new Error(apiResult?.error || "Failed to train the model.")
+      }
+      toast.success(
+        "Training started successfully! You'll get a notification once its finished.",
+        { id: toastId },
+      )
+    } catch (error) {
+      const errMsg =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong in uploading training data."
+      toast.error(errMsg, { id: toastId, duration: 4000 })
+    }
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="">

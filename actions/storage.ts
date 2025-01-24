@@ -1,11 +1,12 @@
 "use server"
-
+import { revalidatePath } from "next/cache"
 import { imageMeta } from "image-meta"
 import { randomUUID } from "crypto"
 
 import { createClient } from "@/lib/supabase/server"
+import { supabaseAdmin } from "@/lib/supabase/admin"
+
 import { Database } from "@/types/database"
-import { revalidatePath } from "next/cache"
 
 export type StoreImagesDataType =
   (Database["public"]["Tables"]["GeneratedImages"]["Insert"] & {
@@ -183,5 +184,19 @@ export const deleteImage = async (id: string, imageName: string) => {
     error: null,
     success: true,
     data: dbData,
+  }
+}
+
+export const getPreSignedStorageUrl = async (fileName: string) => {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { data: urlData, error } = await supabaseAdmin.storage
+    .from("TrainingData")
+    .createSignedUploadUrl(`${user?.id}/${new Date().getTime()}_${fileName}`)
+  return {
+    signedUrl: urlData?.signedUrl || "",
+    error: error?.message || null,
   }
 }
