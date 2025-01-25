@@ -88,7 +88,7 @@ export const storeImages = async (data: StoreImagesDataType) => {
     }
   }
 
-  console.log("@DEBUG", uploadResults)
+  // console.log("@DEBUG", uploadResults)
 
   return {
     error: null,

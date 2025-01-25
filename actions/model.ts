@@ -32,52 +32,52 @@ export const deleteModel = async (
   const supabase = await createClient()
 
   // Delete model version first
-  // if (modelVersion) {
-  //   try {
-  //     const res = await fetch(
-  //       `https://api.replicate.com/v1/models/${REPLICATE_USERNAME}/${modelId}/versions/${modelVersion}`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           Authorization: `Bearer ${process.env.REPLICATE_API_TOKEN}`,
-  //         },
-  //       },
-  //     )
-  //     if (!res.ok) {
-  //       throw new Error("Failed to delete model version from Replicate.")
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to delete model version", error)
-  //     return {
-  //       error: "Failed to delete model version from Replicate.",
-  //       success: false,
-  //     }
-  //   }
-  // }
+  if (modelVersion) {
+    try {
+      const res = await fetch(
+        `https://api.replicate.com/v1/models/${REPLICATE_USERNAME}/${modelId}/versions/${modelVersion}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${process.env.REPLICATE_API_TOKEN}`,
+          },
+        },
+      )
+      if (!res.ok) {
+        throw new Error("Failed to delete model version from Replicate.")
+      }
+    } catch (error) {
+      console.error("Failed to delete model version", error)
+      return {
+        error: "Failed to delete model version from Replicate.",
+        success: false,
+      }
+    }
+  }
 
   // Delete model
-  // if (modelId) {
-  //   try {
-  //     const res = await fetch(
-  //       `https://api.replicate.com/v1/models/${REPLICATE_USERNAME}/${modelId}`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           Authorization: `Bearer ${process.env.REPLICATE_API_TOKEN}`,
-  //         },
-  //       },
-  //     )
-  //     if (!res.ok) {
-  //       throw new Error("Failed to delete the model from Replicate.")
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to delete the model", error)
-  //     return {
-  //       error: "Failed to delete the model from Replicate.",
-  //       success: false,
-  //     }
-  //   }
-  // }
+  if (modelId) {
+    try {
+      const res = await fetch(
+        `https://api.replicate.com/v1/models/${REPLICATE_USERNAME}/${modelId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${process.env.REPLICATE_API_TOKEN}`,
+          },
+        },
+      )
+      if (!res.ok) {
+        throw new Error("Failed to delete the model from Replicate.")
+      }
+    } catch (error) {
+      console.error("Failed to delete the model", error)
+      return {
+        error: "Failed to delete the model from Replicate.",
+        success: false,
+      }
+    }
+  }
 
   // Delete from supabase
   const { error } = await supabase.from("Models").delete().eq("id", id)

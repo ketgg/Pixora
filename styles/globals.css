@@ -57,6 +57,10 @@ body {
     --status-yellow: 41.02 100% 30.98%;
     --status-yellow-alt: 54.29 91.2% 95.49%;
     --status-yellow-border: 47.92 85.28% 68.04%;
+
+    --indigo: 225.96 55.72% 50.39%;
+    --indigo-alt: 222.35 89.47% 96.26%;
+    --indigo-border: 226.04 70.04% 55.49%;
   }
   .dark {
     --background: 0 0% 3.9%;

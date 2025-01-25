@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import React from "react"
+import React, { useEffect } from "react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -27,6 +27,13 @@ type Props = {}
 const OutputImages = (props: Props) => {
   const images = useGeneratedStore((state) => state.images)
   const loading = useGeneratedStore((state) => state.loading)
+  const reset = useGeneratedStore((state) => state.reset)
+  // Reset the state when the component unmounts
+  useEffect(() => {
+    return () => {
+      reset() // Call the reset action
+    }
+  }, [reset])
 
   return (
     <div className="w-full px-12">

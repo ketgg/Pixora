@@ -1,6 +1,6 @@
 "use client"
 
-import React, { use, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -38,8 +38,13 @@ import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { useGeneratedStore } from "@/store/use-generated-store"
+import { Database, Tables } from "@/types/database"
+import { REPLICATE_USERNAME } from "@/constants/replicate"
 
-type Props = {}
+type Props = {
+  userModels: Tables<"Models">[]
+  modelIdVer?: string // modelId:VERSION
+}
 
 const recommendedInferenceSteps: Record<string, string> = {
   "black-forest-labs/flux-dev": "28-50",
@@ -74,6 +79,13 @@ export const formSchema = z
         message: "Guidance can't be greater than 10.",
       })
       .optional(),
+    guidanceScale: z
+      .number()
+      .min(0, { message: "Guidance scale can't be less than 0." })
+      .max(10, {
+        message: "Guidance scale can't be greater than 10.",
+      })
+      .optional(),
     outputFormat: z.string({
       required_error: "Output format is required.",
     }),
@@ -87,6 +99,13 @@ export const formSchema = z
     megapixels: z.string({
       required_error: "Megapixels is required.",
     }),
+    loraScale: z
+      .number()
+      .min(-1, { message: "LoRA scale can't be less than -1." })
+      .max(3, {
+        message: "LoRA scale can't be greater than 3.",
+      })
+      .optional(),
   })
   .refine(
     (data) => {
@@ -104,34 +123,47 @@ export const formSchema = z
     },
   )
 
-const InputParams = (props: Props) => {
+const InputParams = ({ userModels, modelIdVer }: Props) => {
   const generateImages = useGeneratedStore((state) => state.generateImages)
   const loading = useGeneratedStore((state) => state.loading)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      modelName: "black-forest-labs/flux-schnell",
+      modelName: modelIdVer
+        ? `${REPLICATE_USERNAME}/${modelIdVer}`
+        : "black-forest-labs/flux-schnell",
       prompt: "",
       aspectRatio: "1:1",
       numOfOutputs: 1,
-      numOfInferenceSteps: 4,
+      numOfInferenceSteps: modelIdVer ? 28 : 4,
       guidance: 3.5,
+      guidanceScale: 3.5,
       outputFormat: "webp",
       outputQuality: 80,
       goFast: true,
       megapixels: "1",
+      loraScale: 1,
     },
   })
-
+  const [isCustomModel, setIsCustomModel] = useState<boolean>(
+    modelIdVer ? true : false,
+  )
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === "modelName") {
         let defaultSteps
-        if (value.modelName === "black-forest-labs/flux-schnell")
+        if (value.modelName === "black-forest-labs/flux-schnell") {
+          setIsCustomModel(false)
           defaultSteps = 4
-        else if (value.modelName === "black-forest-labs/flux-dev")
+        } else if (value.modelName === "black-forest-labs/flux-dev") {
+          setIsCustomModel(false)
           defaultSteps = 28
+        } else {
+          // Custom model
+          setIsCustomModel(true)
+          defaultSteps = 28
+        }
         if (defaultSteps !== undefined)
           form.setValue("numOfInferenceSteps", defaultSteps)
       }
@@ -144,8 +176,6 @@ const InputParams = (props: Props) => {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     await generateImages(values)
   }
   return (
@@ -193,6 +223,17 @@ const InputParams = (props: Props) => {
                   <SelectItem value="black-forest-labs/flux-dev">
                     black-forest-labs/flux-dev
                   </SelectItem>
+                  {userModels.map(
+                    (model) =>
+                      model.trainingStatus === "SUCCEEDED" && (
+                        <SelectItem
+                          key={model.id}
+                          value={`${REPLICATE_USERNAME}/${model.modelId}:${model.VERSION}`}
+                        >
+                          {model.modelName}
+                        </SelectItem>
+                      ),
+                  )}
                 </SelectContent>
               </Select>
               <FormDescription>
@@ -205,46 +246,69 @@ const InputParams = (props: Props) => {
         <FormField
           control={form.control}
           name="prompt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex flex-wrap items-center justify-between gap-2 font-mono">
-                <div className="flex items-center gap-1.5">
-                  <RiTextSnippet size={16} />
-                  <span>
-                    prompt
-                    <sup className="text-destructive">*</sup>
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {typeof field.value}
-                  </span>
-                </div>
-                <div className="hidden md:block">
-                  <span className="translate-y-0 text-xs text-muted-foreground opacity-100 transition-all">
-                    <span translate="no">
-                      <kbd className="border bg-muted px-1 py-0.5">Shift</kbd>
-                      <kbd className="px-1 py-0.5">+</kbd>
-                      <kbd className="border bg-muted px-1 py-0.5">Return</kbd>
+          render={({ field }) => {
+            const modelId = form
+              .getValues("modelName")
+              .split("/")[1]
+              .split(":")[0]
+            const model = userModels.find((model) => model.modelId === modelId)
+            return (
+              <FormItem>
+                <FormLabel className="flex flex-wrap items-center justify-between gap-2 font-mono">
+                  {isCustomModel && (
+                    <div className="text-info bg-info-alt border-info-border my-1 w-full border px-4 py-3 text-xs">
+                      The trigger word for this model is{" "}
+                      <span className="font-semibold">
+                        {model?.triggerWord}
+                      </span>
+                      . Be sure to include in your prompt.
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-1.5">
+                    <RiTextSnippet size={16} />
+                    <span>
+                      prompt
+                      <sup className="text-destructive">*</sup>
                     </span>
-                    <span> for a new line</span>
-                  </span>
-                </div>
-              </FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Enter your prompt"
-                  className="resize-none overflow-hidden text-sm"
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement
-                    target.style.height = "auto" // Reset height
-                    target.style.height = `${target.scrollHeight}px` // Set to scroll height
-                  }}
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>Prompt to generate your image.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+                    <span className="text-xs text-muted-foreground">
+                      {typeof field.value}
+                    </span>
+                  </div>
+                  <div className="hidden md:block">
+                    <span className="translate-y-0 text-xs text-muted-foreground opacity-100 transition-all">
+                      <span translate="no">
+                        <kbd className="border bg-muted px-1 py-0.5">Shift</kbd>
+                        <kbd className="px-1 py-0.5">+</kbd>
+                        <kbd className="border bg-muted px-1 py-0.5">
+                          Return
+                        </kbd>
+                      </span>
+                      <span> for a new line</span>
+                    </span>
+                  </div>
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Enter your prompt"
+                    className="resize-none overflow-hidden text-sm"
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement
+                      target.style.height = "auto" // Reset height
+                      target.style.height = `${target.scrollHeight}px` // Set to scroll height
+                    }}
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Prompt to generate your image.
+                  {isCustomModel &&
+                    " If you include the `trigger_word` used in the training process you are more likely to activate the trained object, style, or concept in the resulting image."}{" "}
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )
+          }}
         />
         <FormField
           control={form.control}
@@ -335,9 +399,10 @@ const InputParams = (props: Props) => {
           name="numOfInferenceSteps"
           render={({ field }) => {
             const selectedModel = form.watch("modelName")
-            const isDevModel = selectedModel === "black-forest-labs/flux-dev"
+            const isSchnellModel =
+              selectedModel === "black-forest-labs/flux-schnell"
             const recommendedSteps =
-              recommendedInferenceSteps[selectedModel] || "-"
+              recommendedInferenceSteps[selectedModel] || "28-50"
             return (
               <FormItem>
                 <FormLabel className="flex items-center gap-1.5 font-mono">
@@ -350,7 +415,7 @@ const InputParams = (props: Props) => {
                     <Input
                       type="number"
                       min={1}
-                      max={isDevModel ? 50 : 4}
+                      max={isSchnellModel ? 4 : 50}
                       step={1}
                       {...field}
                       className="max-w-20"
@@ -359,7 +424,7 @@ const InputParams = (props: Props) => {
                     <Slider
                       defaultValue={[field.value]}
                       min={1}
-                      max={isDevModel ? 50 : 4}
+                      max={isSchnellModel ? 4 : 50}
                       step={1}
                       value={[field.value]}
                       onValueChange={(value) => field.onChange(value[0])}
@@ -372,7 +437,7 @@ const InputParams = (props: Props) => {
                   quality outputs, faster.
                   <br />
                   <span className="font-semibold">
-                    Default: {isDevModel ? 28 : 4}{" "}
+                    Default: {isSchnellModel ? 4 : 28}
                   </span>
                 </FormDescription>
                 <FormMessage />
@@ -380,56 +445,110 @@ const InputParams = (props: Props) => {
             )
           }}
         />
-        <FormField
-          control={form.control}
-          name="guidance"
-          render={({ field }) => {
-            const selectedModel = form.watch("modelName")
-            const isDevModel = selectedModel === "black-forest-labs/flux-dev"
-            return (
-              <FormItem>
-                <FormLabel className="flex items-center gap-1.5 font-mono">
-                  <RiHashtag size={16} />
-                  <span>{field.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {typeof field.value}
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <div className="flex items-center gap-4">
-                    <Input
-                      disabled={!isDevModel}
-                      type="number"
-                      min={0}
-                      max={10}
-                      step={0.01}
-                      {...field}
-                      className="max-w-20"
-                      onChange={(event) => field.onChange(+event.target.value)}
-                    />
-                    <Slider
-                      disabled={!isDevModel}
-                      defaultValue={[field.value || 0]}
-                      min={0}
-                      max={10}
-                      step={0.01}
-                      value={[field.value || 0]}
-                      onValueChange={(value) => field.onChange(value[0])}
-                    />
-                  </div>
-                </FormControl>
-                <FormDescription>
-                  {isDevModel
-                    ? "Guidance for generated image."
-                    : "Guidance is not required for this model."}
-                  <br />
-                  <span className="font-semibold">Default: 3.5</span>
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )
-          }}
-        />
+        {isCustomModel && (
+          <FormField
+            control={form.control}
+            name="guidanceScale"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-1.5 font-mono">
+                    <RiHashtag size={16} />
+                    <span>guidance_scale</span>
+                    <span className="text-xs text-muted-foreground">
+                      {typeof field.value}
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-4">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={10}
+                        step={0.01}
+                        {...field}
+                        className="max-w-20"
+                        onChange={(event) =>
+                          field.onChange(+event.target.value)
+                        }
+                      />
+                      <Slider
+                        defaultValue={[field.value || 0]}
+                        min={0}
+                        max={10}
+                        step={0.01}
+                        value={[field.value || 0]}
+                        onValueChange={(value) => field.onChange(value[0])}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    {
+                      "Guidance scale for the diffusion process. Lower values can give more realistic images. Good values to try are 2, 2.5, 3 and 3.5"
+                    }
+                    <br />
+                    <span className="font-semibold">Default: 3.5</span>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
+          />
+        )}
+        {!isCustomModel && (
+          <FormField
+            control={form.control}
+            name="guidance"
+            render={({ field }) => {
+              const selectedModel = form.watch("modelName")
+              const isDevModel = selectedModel === "black-forest-labs/flux-dev"
+              return (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-1.5 font-mono">
+                    <RiHashtag size={16} />
+                    <span>{field.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {typeof field.value}
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-4">
+                      <Input
+                        disabled={!isDevModel}
+                        type="number"
+                        min={0}
+                        max={10}
+                        step={0.01}
+                        {...field}
+                        className="max-w-20"
+                        onChange={(event) =>
+                          field.onChange(+event.target.value)
+                        }
+                      />
+                      <Slider
+                        disabled={!isDevModel}
+                        defaultValue={[field.value || 0]}
+                        min={0}
+                        max={10}
+                        step={0.01}
+                        value={[field.value || 0]}
+                        onValueChange={(value) => field.onChange(value[0])}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    {isDevModel
+                      ? "Guidance for the diffusion process. Lower values can give more realistic images. Good values to try are 2, 2.5, 3 and 3.5 "
+                      : "Guidance is not required for this model."}
+                    <br />
+                    <span className="font-semibold">Default: 3.5</span>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
+          />
+        )}
         <FormField
           control={form.control}
           name="outputFormat"
@@ -572,6 +691,55 @@ const InputParams = (props: Props) => {
             </FormItem>
           )}
         />
+        {isCustomModel && (
+          <FormField
+            control={form.control}
+            name="loraScale"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1.5 font-mono">
+                  <RiHashtag size={16} />
+                  <span>lora_scale</span>
+                  <span className="text-xs text-muted-foreground">
+                    {typeof field.value}
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="number"
+                      min={-1}
+                      max={3}
+                      step={0.01}
+                      {...field}
+                      className="max-w-20"
+                      onChange={(event) => field.onChange(+event.target.value)}
+                    />
+                    <Slider
+                      defaultValue={[field.value || 1]}
+                      min={-1}
+                      max={3}
+                      step={0.01}
+                      value={[field.value || 1]}
+                      onValueChange={(value) => field.onChange(value[0])}
+                    />
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  Determines how strongly the main LoRA should be applied. Sane
+                  results between 0 and 1 for base inference. For go_fast we
+                  apply a 1.5x multiplier to this value; we've generally seen
+                  good performance when scaling the base value by that amount.
+                  You may still need to experiment to find the best value for
+                  your particular LoRA.
+                  <br />
+                  <span className="font-semibold">Default: 1</span>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <div className="sticky bottom-0 flex items-center justify-end gap-2 border-t bg-background py-4">
           <Button type="button" onClick={handleReset} variant="outline">
             Reset

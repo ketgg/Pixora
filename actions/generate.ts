@@ -3,6 +3,7 @@
 import Replicate from "replicate"
 import { z } from "zod"
 import { formSchema } from "@/app/(dashboard)/generate/_components/input-params"
+import { REPLICATE_USERNAME } from "@/constants/replicate"
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -19,6 +20,7 @@ export const generateImages = async (
   values: z.infer<typeof formSchema>,
 ): Promise<GenerateImageResponse> => {
   const modelName = values.modelName
+  const isCustomModel = modelName.startsWith(REPLICATE_USERNAME)
   const isFluxDev = modelName === "black-forest-labs/flux-dev"
   const PROMPT_STRENGTH = 0.8
 
@@ -33,15 +35,24 @@ export const generateImages = async (
     num_inference_steps: values.numOfInferenceSteps,
   }
 
-  const modelInputParams = isFluxDev
+  const modelInputParams = isCustomModel
     ? {
         ...sharedParams,
-        guidance: values.guidance,
+        model: "dev",
+        guidance_scale: values.guidanceScale,
+        lora_scale: values.loraScale,
+        extra_lora_scale: 1,
         prompt_strength: PROMPT_STRENGTH,
       }
-    : sharedParams
+    : isFluxDev
+      ? {
+          ...sharedParams,
+          guidance: values.guidance,
+          prompt_strength: PROMPT_STRENGTH,
+        }
+      : sharedParams
 
-  // console.log("@DEBUG", modelInputParams)
+  // console.log("@DEBUG", modelName, modelInputParams)
   try {
     const result = await replicate.run(modelName as `${string}/${string}`, {
       input: modelInputParams,
@@ -54,6 +65,7 @@ export const generateImages = async (
       data: result as [],
     }
   } catch (error: any) {
+    // console.log("@ERROR in generateImages:", error)
     return {
       error: error.message || "Something went wrong in generateImages",
       success: false,

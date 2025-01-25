@@ -80,6 +80,9 @@ export default {
         "failed-border": "hsl(var(--status-tomato-border))",
         "processing-border": "hsl(var(--status-yellow-border))",
         "canceled-border": "hsl(var(--status-gray-border))",
+        info: "hsl(var(--indigo))",
+        "info-alt": "hsl(var(--indigo-alt))",
+        "info-border": "hsl(var(--indigo-border))",
       },
       borderRadius: {
         lg: "var(--radius)",

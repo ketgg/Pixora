@@ -1,7 +1,6 @@
 import { create } from "zustand"
 import { z } from "zod"
 import { toast } from "sonner"
-import { randomUUID } from "crypto"
 
 import { formSchema } from "@/app/(dashboard)/generate/_components/input-params"
 import { generateImages as generateImagesAction } from "@/actions/generate"
@@ -12,6 +11,7 @@ type GeneratedState = {
   images: { url: string }[]
   error: any | null
   generateImages: (values: z.infer<typeof formSchema>) => Promise<void>
+  reset: () => void // Add a reset action
 }
 
 export const useGeneratedStore = create<GeneratedState>((set) => ({
@@ -28,11 +28,12 @@ export const useGeneratedStore = create<GeneratedState>((set) => ({
         { id: toastId },
       )
       const { error, success, data } = await generateImagesAction(values)
+      // console.log({ error, success, data })
       if (!success) {
         set({ error: error, loading: false })
+        toast.error(error, { id: toastId })
         return
       }
-      console.log({ error, success, data })
 
       let dataWithUrl
       if (data) {
@@ -58,5 +59,9 @@ export const useGeneratedStore = create<GeneratedState>((set) => ({
         id: toastId,
       })
     }
+  },
+
+  reset: () => {
+    set({ images: [], loading: false, error: null })
   },
 }))

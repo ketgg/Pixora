@@ -19,6 +19,7 @@ import { RiDownloadLine } from "@remixicon/react"
 import { Badge } from "@/components/ui/badge"
 
 import DeleteDialog from "./delete-dialog"
+import { REPLICATE_USERNAME } from "@/constants/replicate"
 
 type Props = {
   img: GenImgType
@@ -27,6 +28,10 @@ type Props = {
 
 const SheetWrapper = ({ img, children }: Props) => {
   const [isDelPending, setIsDelPending] = useState(false)
+  // modelName is the modelName on Replicate not the one given by user!
+  const modelName = img.modelName?.startsWith(REPLICATE_USERNAME)
+    ? img.modelName.split("/")[1].split(":")[0]
+    : img.modelName
   const handleDownload = () => {
     fetch(img.url || "")
       .then((res) => res.blob())
@@ -91,7 +96,7 @@ const SheetWrapper = ({ img, children }: Props) => {
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">model:</span>
-                <span className="font-freigeist">{img.modelName}</span>
+                <span className="font-freigeist">{modelName}</span>
               </Badge>
               <Badge
                 variant={"outline"}

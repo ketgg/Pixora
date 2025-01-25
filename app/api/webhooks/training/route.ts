@@ -86,7 +86,7 @@ const updateModelStatus = async ({
       .update({
         trainingStatus: status,
         trainingTime: trainingTime ?? null,
-        VERSION: version ? version.split(":")[1] : null,
+        VERSION: version ?? null,
       })
       .eq("userId", userId)
       .eq("modelName", modelName)
