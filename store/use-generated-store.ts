@@ -3,7 +3,7 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { randomUUID } from "crypto"
 
-import { formSchema } from "@/app/(dashboard)/generate-image/_components/input-params"
+import { formSchema } from "@/app/(dashboard)/generate/_components/input-params"
 import { generateImages as generateImagesAction } from "@/actions/generate"
 import { storeImages } from "@/actions/storage"
 

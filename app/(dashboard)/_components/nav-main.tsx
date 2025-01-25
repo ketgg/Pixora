@@ -62,7 +62,7 @@ const items: ItemType[] = [
   },
   {
     title: "Generate Image",
-    url: "/generate-image",
+    url: "/generate",
     icon: RiImageAiLine,
     items: [],
   },
@@ -74,7 +74,7 @@ const items: ItemType[] = [
   },
   {
     title: "Train Model",
-    url: "/train-model",
+    url: "/train",
     icon: RiBox3Line,
     items: [],
   },

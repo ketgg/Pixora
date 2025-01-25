@@ -4,7 +4,12 @@ import Link from "next/link"
 import React, { useState } from "react"
 import { Masonry } from "react-plock"
 import { formatDistance, set } from "date-fns"
-import { RiDeleteBin6Line, RiTimeLine } from "@remixicon/react"
+import {
+  RiArrowRightFill,
+  RiArrowRightLine,
+  RiDeleteBin6Line,
+  RiTimeLine,
+} from "@remixicon/react"
 
 import {
   Card,
@@ -55,7 +60,7 @@ const ModelsList = ({ modelsData }: Props) => {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Link href="/train-model">
+          <Link href="/train">
             <Button className="shadow-none">Create Model</Button>
           </Link>
         </CardFooter>
@@ -74,6 +79,11 @@ const ModelsList = ({ modelsData }: Props) => {
         }}
         render={(model) => {
           const status = model.trainingStatus
+          const trainingTimeInMins =
+            Math.round(Number(model.trainingTime)) / 60 || NaN
+          const formattedTime = !isNaN(trainingTimeInMins)
+            ? trainingTimeInMins.toFixed(2)
+            : "NaN"
           return (
             <Card className="flex w-full flex-col gap-4 rounded-lg p-4 shadow-none">
               <CardHeader className="flex flex-col gap-0 space-y-0 p-0">
@@ -124,11 +134,32 @@ const ModelsList = ({ modelsData }: Props) => {
                     <RiTimeLine size={16} />
                     <span className="font-mono text-xs">Training Duration</span>
                   </div>
-                  <p className="font-mono text-sm">
-                    {Math.round(Number(model.trainingTime)) / 60 || NaN} mins
-                  </p>
+                  <p className="font-mono text-sm">{formattedTime} mins</p>
                 </div>
               </CardContent>
+              <CardFooter className="p-0">
+                <Link
+                  href={
+                    status === "SUCCEEDED"
+                      ? `/generate?model-id=${model.modelId}:${model.VERSION}`
+                      : "#"
+                  }
+                  className={cn(
+                    "group inline-flex w-full",
+                    status !== "SUCCEEDED" && "pointer-events-none opacity-75",
+                  )}
+                >
+                  <Button
+                    disabled={status !== "SUCCEEDED"}
+                    className={cn(
+                      "w-full group-hover:bg-primary/90",
+                      status !== "SUCCEEDED" && "cursor-not-allowed",
+                    )}
+                  >
+                    Generate Images <RiArrowRightLine />
+                  </Button>
+                </Link>
+              </CardFooter>
             </Card>
           )
         }}

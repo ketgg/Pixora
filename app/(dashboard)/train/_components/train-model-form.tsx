@@ -149,18 +149,19 @@ const TrainModelForm = (props: Props) => {
     form.reset()
   }
 
-  const toastId = useId()
+  const storageToastId = useId()
+  const trainingToastId = useId()
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    toast.loading("Uploading training data...", { id: toastId })
+    toast.loading("Uploading training data...", { id: storageToastId })
     try {
       const data = await getPreSignedStorageUrl(values.zipFile.name)
       // console.log("@SIGNED_URL", data)
       if (data.error) {
         toast.error(data.error || "Failed to get the upload URL.", {
-          id: toastId,
+          id: storageToastId,
         })
         return
       }
@@ -180,9 +181,11 @@ const TrainModelForm = (props: Props) => {
 
       const res = await urlResponse.json()
       toast.success("Training data uploaded successfully!", {
-        id: toastId,
+        id: storageToastId,
       })
 
+      // Start model training
+      toast.loading("Initiating model training...", { id: trainingToastId })
       const apiData = {
         fileKey: res.Key,
         ...values,
@@ -199,16 +202,15 @@ const TrainModelForm = (props: Props) => {
       if (!apiResponse.ok || apiResult?.error) {
         throw new Error(apiResult?.error || "Failed to train the model.")
       }
+
       toast.success(
-        "Training started successfully! You'll get a notification once its finished.",
-        { id: toastId },
+        "Training started successfully! We'll send you an email once its finished.",
+        { id: trainingToastId },
       )
     } catch (error) {
       const errMsg =
-        error instanceof Error
-          ? error.message
-          : "Something went wrong in uploading training data."
-      toast.error(errMsg, { id: toastId, duration: 4000 })
+        error instanceof Error ? error.message : "Something went wrong."
+      toast.error(errMsg, { duration: 3000 })
     }
   }
 

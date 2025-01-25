@@ -5,13 +5,13 @@ import { createClient } from "@/lib/supabase/server"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 
 import { REPLICATE_USERNAME } from "@/constants/replicate"
+import { SITE_URL } from "@/constants/site"
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 })
 
-const SITE_URL =
-  process.env.PIXORA_SITE_URL || "https://749f-103-37-201-226.ngrok-free.app"
+const baseUrl = SITE_URL
 
 export const POST = async (request: NextRequest) => {
   try {
@@ -36,10 +36,11 @@ export const POST = async (request: NextRequest) => {
       )
     }
 
-    const fileName = inputParams.fileKey.replace("TrainingData/", "")
+    const filePath = inputParams.fileKey.replace("TrainingData/", "")
+    // console.log("@FILE", filePath) // "userId/fileName"
     const { data: fileUrl } = await supabaseAdmin.storage
       .from("TrainingData")
-      .createSignedUrl(fileName, 3600)
+      .createSignedUrl(filePath, 3600)
     if (!fileUrl?.signedUrl) {
       throw new Error("Failed to get the file URL.")
     }
@@ -75,8 +76,8 @@ export const POST = async (request: NextRequest) => {
           layers_to_optimize_regex: inputParams.layersToOptimizeRegex || "",
           gradient_checkpointing: inputParams.gradientCheckpointing || false,
         },
-        webhook: `${SITE_URL}/api/webhooks/training?userId=${user.id}&modelName=${encodeURIComponent(modelId)}&fileName=${encodeURIComponent(fileName)}`,
-        webhook_events_filter: ["completed"],
+        webhook: `${baseUrl}/api/webhooks/training?user-id=${user.id}&model-name=${encodeURIComponent(inputParams.modelName)}&file-path=${encodeURIComponent(filePath)}`,
+        webhook_events_filter: ["completed", "start"],
       },
     )
     // console.log("@TRAINING_DATA", training)
