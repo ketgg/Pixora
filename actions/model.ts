@@ -1,8 +1,8 @@
 "use server"
+import { revalidatePath } from "next/cache"
 import { REPLICATE_USERNAME } from "@/constants/replicate"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createClient } from "@/lib/supabase/server"
-import { revalidatePath } from "next/cache"
 
 export const getUserTrainedModels = async () => {
   const supabase = await createClient()

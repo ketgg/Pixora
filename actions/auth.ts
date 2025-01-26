@@ -21,6 +21,9 @@ export const signUp = async (formData: FormData): Promise<AuthResponse> => {
     },
   }
   const { data: signUpData, error } = await supabase.auth.signUp(authData)
+  // console.log(error?.message, error?.cause)
+  // Add initial credits of 10 to UserBalance table
+  // Handled through triggers in SupaBase
   return {
     error: error?.message || "There was some error signing up",
     success: !error,

@@ -55,7 +55,7 @@ const SignInForm = (props: Props) => {
 
     const { data, success, error } = await signIn(formData)
     if (!success) {
-      toast.error("Failed to Sign In", { id: toastId })
+      toast.error(error ?? "Failed to Sign In.", { id: toastId })
       setLoading(false)
     } else {
       toast.success("Signed in successfully!", {

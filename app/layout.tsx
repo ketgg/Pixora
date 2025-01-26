@@ -8,6 +8,8 @@ import "@/styles/globals.css"
 
 import { Toaster } from "@/components/ui/sonner"
 
+import PayPalProvider from "@/components/providers/paypal"
+
 import {
   RiLoader4Line,
   RiCheckLine,
@@ -101,34 +103,36 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${neueFreigeist.variable} ${basierSquare.variable} ${jetBrainsMono.variable} mx-auto min-w-80 max-w-[120rem] font-sans antialiased`}
-      >
-        <NextTopLoader
-          color="#101010"
-          initialPosition={0.08}
-          crawlSpeed={200}
-          height={2}
-          crawl={true}
-          showSpinner={false}
-          easing="ease"
-          speed={200}
-          shadow={false}
-        />
-        {children}
-        <Toaster
-          theme="light"
-          icons={{
-            success: <RiCheckLine />,
-            error: <RiErrorWarningFill />,
-            info: <RiInformation2Fill />,
-            loading: <RiLoader4Line className="animate-spin" />,
-          }}
-          toastOptions={{
-            className: "rounded-none font-freigeist",
-          }}
-        />
-      </body>
+      <PayPalProvider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${neueFreigeist.variable} ${basierSquare.variable} ${jetBrainsMono.variable} mx-auto min-w-80 max-w-[120rem] font-sans antialiased`}
+        >
+          <NextTopLoader
+            color="#101010"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={2}
+            crawl={true}
+            showSpinner={false}
+            easing="ease"
+            speed={200}
+            shadow={false}
+          />
+          {children}
+          <Toaster
+            theme="light"
+            icons={{
+              success: <RiCheckLine />,
+              error: <RiErrorWarningFill />,
+              info: <RiInformation2Fill />,
+              loading: <RiLoader4Line className="animate-spin" />,
+            }}
+            toastOptions={{
+              className: "rounded-none font-freigeist",
+            }}
+          />
+        </body>
+      </PayPalProvider>
     </html>
   )
 }

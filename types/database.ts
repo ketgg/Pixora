@@ -65,8 +65,8 @@ export type Database = {
       }
       Models: {
         Row: {
+          autocaption: boolean | null
           autocaptionPrefix: string | null
-          autocaptions: boolean | null
           autocaptionSuffix: string | null
           cacheLatentsToDisk: boolean | null
           captionDropoutRate: number | null
@@ -90,8 +90,8 @@ export type Database = {
           VERSION: string | null
         }
         Insert: {
+          autocaption?: boolean | null
           autocaptionPrefix?: string | null
-          autocaptions?: boolean | null
           autocaptionSuffix?: string | null
           cacheLatentsToDisk?: boolean | null
           captionDropoutRate?: number | null
@@ -115,8 +115,8 @@ export type Database = {
           VERSION?: string | null
         }
         Update: {
+          autocaption?: boolean | null
           autocaptionPrefix?: string | null
-          autocaptions?: boolean | null
           autocaptionSuffix?: string | null
           cacheLatentsToDisk?: boolean | null
           captionDropoutRate?: number | null
@@ -141,6 +141,33 @@ export type Database = {
         }
         Relationships: []
       }
+      Profiles: {
+        Row: {
+          credits: number | null
+          email: string | null
+          fullName: string | null
+          id: string
+          imagesGenerated: number | null
+          modelsTrained: number | null
+        }
+        Insert: {
+          credits?: number | null
+          email?: string | null
+          fullName?: string | null
+          id: string
+          imagesGenerated?: number | null
+          modelsTrained?: number | null
+        }
+        Update: {
+          credits?: number | null
+          email?: string | null
+          fullName?: string | null
+          id?: string
+          imagesGenerated?: number | null
+          modelsTrained?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -149,6 +176,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      PRICING_PLAN_INTERVAL: "DAY" | "WEEK" | "MONTH" | "YEAR"
+      PRICING_TYPE: "ONE_TIME" | "RECURRING"
+      SUBSCRIPTION_STATUS:
+        | "TRIALING"
+        | "ACTIVE"
+        | "CANCELED"
+        | "INCOMPLETE"
+        | "INCOMPLETE_EXPIRED"
+        | "PAST_DUE"
+        | "UNPAID"
       TRAINING_STATUS:
         | "STARTING"
         | "PROCESSING"
