@@ -8,37 +8,21 @@ import {
 
 import { PACKS } from "@/constants/packs"
 import { ordersController } from "@/lib/paypal/client"
+import { stat } from "fs"
 
 /**
- * Create an order to start the transaction.
- * @see https://developer.paypal.com/docs/api/orders/v2/#orders_create
+ * Capture payment for the created order to complete the transaction.
+ * @see https://developer.paypal.com/docs/api/orders/v2/#orders_capture
  */
-const createOrder = async (cart: { id: string }[]) => {
-  if (cart.length === 0) {
-    return {
-      jsonResponse: { error: "Cart is empty." },
-      httpStatusCode: 401,
-    }
-  }
-  const selectedPack = PACKS.find((pack) => pack.id === cart[0].id)
+const captureOrder = async (orderID: string) => {
   const collect = {
-    body: {
-      intent: CheckoutPaymentIntent.Capture,
-      purchaseUnits: [
-        {
-          amount: {
-            currencyCode: "USD",
-            value: selectedPack?.price.toFixed(2),
-          },
-        },
-      ],
-    } as OrderRequest,
+    id: orderID,
     prefer: "return=minimal",
   }
 
   try {
     const { body, ...httpResponse } =
-      await ordersController.ordersCreate(collect)
+      await ordersController.ordersCapture(collect)
     // Get more response info...
     // const { statusCode, headers } = httpResponse;
     return {
@@ -53,12 +37,13 @@ const createOrder = async (cart: { id: string }[]) => {
   }
 }
 
-export const POST = async (request: NextRequest) => {
+export const POST = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ orderID: string }> },
+) => {
   try {
-    const body = await request.json()
-    // console.log("@ORDER_BODY", body)
-    const { cart } = body
-    const response = await createOrder(cart)
+    const orderID = (await params).orderID
+    const response = await captureOrder(orderID)
     if (!response?.jsonResponse || !response?.httpStatusCode) {
       throw new Error("Invalid response.")
     }
@@ -67,7 +52,7 @@ export const POST = async (request: NextRequest) => {
   } catch (error) {
     console.error("Failed to create order:", error)
     return NextResponse.json(
-      { error: "Failed to create order." },
+      { error: "Failed to capture order." },
       { status: 500 },
     )
   }
