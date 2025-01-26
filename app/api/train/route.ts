@@ -7,6 +7,8 @@ import { supabaseAdmin } from "@/lib/supabase/admin"
 import { REPLICATE_USERNAME } from "@/constants/replicate"
 import { SITE_URL } from "@/constants/site"
 
+import { decrementUserCredits } from "@/actions/balance"
+
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 })
@@ -25,6 +27,17 @@ export const POST = async (request: NextRequest) => {
     } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: "Unauthenticated." }, { status: 401 })
+    }
+
+    // For now, users must have atleast 640 credits to initiate a training
+    // TODO - Do it in a better way!
+    const {
+      data: decData,
+      success: decSucc,
+      error: decErr,
+    } = await decrementUserCredits(640)
+    if (decErr || !decSucc) {
+      throw new Error(decErr ? decErr : "Something went wrong while training.")
     }
 
     const inputParams = await request.json()

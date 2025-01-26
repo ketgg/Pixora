@@ -5,6 +5,9 @@ import { z } from "zod"
 import { formSchema } from "@/app/(dashboard)/generate/_components/input-params"
 import { REPLICATE_USERNAME } from "@/constants/replicate"
 
+import { decrementUserCredits } from "./balance"
+import { CREDITS_COST } from "@/constants/cost"
+
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
   useFileOutput: false,
@@ -54,11 +57,26 @@ export const generateImages = async (
 
   // console.log("@DEBUG", modelName, modelInputParams)
   try {
+    // Update the user credits
+    const { error: decrementErr, success: decrementSuccess } =
+      await decrementUserCredits(
+        isCustomModel
+          ? CREDITS_COST["custom-model-generation"]
+          : isFluxDev
+            ? CREDITS_COST["flux-dev-generation"]
+            : CREDITS_COST["flux-schnell-generation"],
+      )
+    if (decrementErr || !decrementSuccess) {
+      throw new Error(
+        "Insufficient credits, Click on billing tab to purchase more credits.",
+      )
+    }
     const result = await replicate.run(modelName as `${string}/${string}`, {
       input: modelInputParams,
     })
     // console.log("@ACTION:", result)
     // We get an array of image url's
+
     return {
       error: null,
       success: true,

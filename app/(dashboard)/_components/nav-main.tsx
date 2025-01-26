@@ -21,6 +21,8 @@ import {
   RiUserSettingsLine,
   RiArrowRightSLine,
   RiBox3Line,
+  RiCoinsLine,
+  RiMoneyDollarCircleLine,
 } from "@remixicon/react"
 
 import {
@@ -38,6 +40,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { Badge } from "@/components/ui/badge"
+
+import { getUserBalance } from "@/actions/balance"
 
 import { cn } from "@/lib/utils"
 
@@ -98,8 +103,13 @@ const items: ItemType[] = [
   },
 ]
 
-export function NavMain() {
+type Props = {
+  userCredits: number
+}
+
+export function NavMain({ userCredits }: Props) {
   const path = usePathname()
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
@@ -139,15 +149,26 @@ export function NavMain() {
             )
           } else {
             const isActive = item.url === path
+            const isBilling = item.url === "/billing"
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton tooltip={item.title} asChild>
+                <SidebarMenuButton className="" tooltip={item.title} asChild>
                   <Link
                     href={item.url}
                     className={cn(isActive && "text-foreground")}
                   >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
+
+                    {/* {isBilling && (
+                      <Badge
+                        variant="outline"
+                        className="flex gap-1 rounded-full px-2"
+                      >
+                        <RiMoneyDollarCircleLine size={16} />
+                        {userCredits}
+                      </Badge>
+                    )} */}
                   </Link>
                   {/* // {item.icon && <item.icon />}
                   // <span>{item.title}</span> */}

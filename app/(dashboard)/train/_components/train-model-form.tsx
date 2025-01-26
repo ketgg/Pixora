@@ -210,6 +210,8 @@ const TrainModelForm = (props: Props) => {
     } catch (error) {
       const errMsg =
         error instanceof Error ? error.message : "Something went wrong."
+      toast.dismiss(storageToastId)
+      toast.dismiss(trainingToastId)
       toast.error(errMsg, { duration: 3000 })
     }
   }

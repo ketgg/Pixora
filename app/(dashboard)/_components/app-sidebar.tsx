@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/sidebar"
 import { createClient } from "@/lib/supabase/server"
 
+import { getUserBalance } from "@/actions/balance"
+
 export async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
@@ -24,13 +26,15 @@ export async function AppSidebar({
     email: data.user?.email || "",
   }
 
+  const { data: userCredits } = await getUserBalance()
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <NavLogo />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain />
+        <NavMain userCredits={userCredits} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser name={user.fullName} email={user.email} />

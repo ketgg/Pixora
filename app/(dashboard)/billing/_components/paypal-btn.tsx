@@ -4,8 +4,12 @@ import React, { useId } from "react"
 
 import { PayPalButtons } from "@paypal/react-paypal-js"
 import { OnApproveActions, OnApproveData } from "@paypal/paypal-js"
-import { PackType } from "@/types/pack"
+
 import { toast } from "sonner"
+
+import { updateUserBalance } from "@/actions/balance"
+
+import { PackType } from "@/types/pack"
 
 type Props = {
   pack: PackType
@@ -64,6 +68,11 @@ const PayPalBtn = ({ pack }: Props) => {
       })
 
       const orderData = await response.json()
+      // console.log(
+      //   "Capture result",
+      //   orderData,
+      //   JSON.stringify(orderData, null, 2),
+      // )
       // Three cases to handle:
       //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
       //   (2) Other non-recoverable errors -> Show a failure message
@@ -83,11 +92,21 @@ const PayPalBtn = ({ pack }: Props) => {
         toast.success(`Transaction ${transaction.status}: ${transaction.id}.`, {
           id: captureToastId,
         })
-        console.log(
-          "Capture result",
-          orderData,
-          JSON.stringify(orderData, null, 2),
-        )
+
+        // Update user balance
+        const {
+          data: updateData,
+          error: updateErr,
+          success: updateSuccess,
+        } = await updateUserBalance(packId)
+        if (!updateSuccess || updateErr) {
+          toast.error(
+            "Something went wrong in updating your credits. Please contact the developer.",
+          )
+          throw new Error("Error updating user credits.")
+        }
+        toast.success("Your credits have been added successfully, Have fun!")
+        // TODO - Create entry in purchases table + send purchase mail
       }
     } catch (error) {
       console.error(error)
@@ -102,7 +121,7 @@ const PayPalBtn = ({ pack }: Props) => {
       <PayPalButtons
         style={{
           shape: "pill",
-          layout: "horizontal",
+          layout: "vertical",
           color: "gold",
         }}
         createOrder={handleCreateOrder}
