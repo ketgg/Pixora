@@ -96,22 +96,13 @@ export const deleteModel = async (
   }
 }
 
-export const updateModelsTrained = async (count: number) => {
+export const updateModelsTrained = async (count: number, userId: string) => {
   try {
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      throw new Error("Unauthenticated")
-    }
-
     // Fetch the current credits of the user
-    const { data: profileData, error: fetchError } = await supabase
+    const { data: profileData, error: fetchError } = await supabaseAdmin
       .from("Profiles")
       .select("modelsTrained")
-      .eq("id", user.id)
+      .eq("id", userId)
       .single()
 
     if (fetchError) {
@@ -121,10 +112,10 @@ export const updateModelsTrained = async (count: number) => {
     const newCount = currentCount + count
 
     // Update the user's credits in the Profiles table
-    const { data: updateData, error: updateError } = await supabase
+    const { data: updateData, error: updateError } = await supabaseAdmin
       .from("Profiles")
       .update({ modelsTrained: newCount })
-      .eq("id", user.id)
+      .eq("id", userId)
 
     if (updateError) {
       throw new Error("Error updating user models trained")

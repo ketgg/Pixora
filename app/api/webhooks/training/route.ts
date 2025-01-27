@@ -15,7 +15,7 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 })
 
-const resend = new Resend(process.env.RESEND_API_TOKEN)
+const resend = new Resend(process.env.RESEND_API_KEY!)
 
 const verifyWebhook = async (request: Request, body: any): Promise<boolean> => {
   const webhookId = request.headers.get("webhook-id") ?? ""
@@ -52,7 +52,7 @@ const sendEmail = async ({
   status: statusType
 }) => {
   try {
-    await resend.emails.send({
+    const res = await resend.emails.send({
       from: "Pixora <onboarding@resend.dev>",
       to: [userEmail],
       subject,
@@ -62,6 +62,9 @@ const sendEmail = async ({
         status,
       }),
     })
+    // TODO (In future) - You can only send testing emails to your own email address (ketto.dev@gmail.com). To send emails to other recipients, please
+    // verify a domain at resend.com/domains, and change the `from` address to an email using this domain
+    // console.log("@RESEND_EMAIL", res)
   } catch (error) {
     console.error(`Failed to send email for status: ${status}`, error)
   }
@@ -222,7 +225,7 @@ const statusHandlers = {
 export const POST = async (request: Request) => {
   try {
     const body = await request.json()
-    // console.log("@WEBHOOK_BODY", body)
+    console.log("@WEBHOOK_BODY", body)
 
     const url = new URL(request.url)
     const userId = url.searchParams.get("user-id") ?? ""
@@ -256,13 +259,15 @@ export const POST = async (request: Request) => {
         filePath,
         body,
       })
-      // Update modelsTrained, For now we increment models trained irrespective of the status.
-      const { success, error } = await updateModelsTrained(1)
-      if (error) {
-        throw new Error(error)
-      }
     } else {
       console.error(`Unknown status: ${body.status}`)
+    }
+
+    // Update modelsTrained, For now we increment models trained irrespective of the status.
+    // TODO - Find a better place to update
+    const { success, error } = await updateModelsTrained(1, userId)
+    if (error) {
+      throw new Error(error)
     }
 
     return new NextResponse("OK", { status: 200 })
