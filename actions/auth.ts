@@ -33,6 +33,7 @@ export const signUp = async (formData: FormData): Promise<AuthResponse> => {
 
 export const signIn = async (formData: FormData): Promise<AuthResponse> => {
   const supabase = await createClient()
+
   const authData = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -50,4 +51,28 @@ export const signOut = async (): Promise<void> => {
   const supabase = await createClient()
   await supabase.auth.signOut()
   redirect("/login")
+}
+
+export const getUser = async () => {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  return user
+}
+
+export const updatePassword = async (
+  newPass: string,
+): Promise<AuthResponse> => {
+  const supabase = await createClient()
+
+  const { data: signUpData, error } = await supabase.auth.updateUser({
+    password: newPass,
+  })
+
+  return {
+    error: error?.message || "There was some error updating the password",
+    success: !error,
+    data: signUpData || null,
+  }
 }

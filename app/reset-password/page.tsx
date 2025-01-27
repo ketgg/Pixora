@@ -1,20 +1,15 @@
-import { redirect } from "next/navigation"
 import Image from "next/image"
 
 import React from "react"
 
 import Logo from "@/components/logo"
+import ResetPasswordForm from "./_components/reset-password-form"
 
 import LoginBackground from "@/assets/images/bg-image.png"
-import AuthForm from "@/components/auth/auth-form"
-
-import { getUser } from "@/actions/auth"
 
 type Props = {}
 
-const LoginPage = async (props: Props) => {
-  const user = await getUser()
-  if (user) redirect("/home")
+const ResetPasswordPage = async (props: Props) => {
   return (
     <main className="relative h-screen min-w-72 sm:grid sm:grid-cols-2">
       <section className="relative hidden w-full bg-muted p-8 text-foreground sm:flex sm:flex-col">
@@ -44,10 +39,10 @@ const LoginPage = async (props: Props) => {
 
       <section className="relative flex h-full flex-col items-center justify-center p-6">
         <div className="w-full max-w-md">
-          <AuthForm />
+          <ResetPasswordForm />
         </div>
       </section>
     </main>
   )
 }
-export default LoginPage
+export default ResetPasswordPage

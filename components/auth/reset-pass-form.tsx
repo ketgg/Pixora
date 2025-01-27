@@ -1,9 +1,10 @@
 "use client"
 
-import React from "react"
+import React, { useId } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,6 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+
+import { resetPassword } from "@/actions/settings"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,8 +34,29 @@ const ResetPasswordForm = (props: Props) => {
       email: "",
     },
   })
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const toastId = useId()
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    toast.loading("Sending reset password email...", { id: toastId })
+    try {
+      const { success, error } = await resetPassword({
+        email: values.email || "",
+      })
+      if (!success) {
+        toast.error(error, { id: toastId })
+      } else {
+        toast.success(
+          "Password reset email sent successfully! Please check your email for further intructions.",
+          { id: toastId },
+        )
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while sending the reset password link.",
+        { id: toastId },
+      )
+    }
     console.log(values)
   }
 
