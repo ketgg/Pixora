@@ -1,4 +1,5 @@
 "use server"
+
 import { revalidatePath } from "next/cache"
 import { REPLICATE_USERNAME } from "@/constants/replicate"
 import { supabaseAdmin } from "@/lib/supabase/admin"
@@ -93,48 +94,5 @@ export const deleteModel = async (
   return {
     error: null,
     success: true,
-  }
-}
-
-export const updateModelsTrained = async (count: number, userId: string) => {
-  try {
-    // Fetch the current credits of the user
-    const { data: profileData, error: fetchError } = await supabaseAdmin
-      .from("Profiles")
-      .select("modelsTrained")
-      .eq("id", userId)
-      .single()
-
-    if (fetchError) {
-      throw new Error("Error getting models trained by the user.")
-    }
-    const currentCount = profileData.modelsTrained || 0
-    const newCount = currentCount + count
-
-    // Update the user's credits in the Profiles table
-    const { data: updateData, error: updateError } = await supabaseAdmin
-      .from("Profiles")
-      .update({ modelsTrained: newCount })
-      .eq("id", userId)
-
-    if (updateError) {
-      throw new Error("Error updating user models trained")
-    }
-
-    // Return the updated credits balance
-    return {
-      error: null,
-      success: true,
-      data: { imagesCount: newCount },
-    }
-  } catch (error) {
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : "Something went wrong while updating models trained in Profiles",
-      success: false,
-      data: null,
-    }
   }
 }

@@ -7,7 +7,7 @@ import { OnApproveActions, OnApproveData } from "@paypal/paypal-js"
 
 import { toast } from "sonner"
 
-import { updateUserBalance } from "@/actions/balance"
+import { updateUserBalance } from "@/actions/profile"
 
 import { PackType } from "@/types/pack"
 

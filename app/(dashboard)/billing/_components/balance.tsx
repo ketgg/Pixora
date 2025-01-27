@@ -1,7 +1,7 @@
 import React from "react"
 import { Badge } from "@/components/ui/badge"
 import { RiMoneyDollarCircleLine } from "@remixicon/react"
-import { getUserBalance } from "@/actions/balance"
+import { getUserBalance } from "@/actions/profile"
 
 type Props = {}
 

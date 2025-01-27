@@ -9,7 +9,7 @@ import PixoraModelTrainingResultEmail, {
 } from "@/components/resend/pixora-email-template"
 
 import { Database } from "@/types/database"
-import { updateModelsTrained } from "@/actions/model"
+import { updateModelsTrained } from "@/actions/profile"
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,

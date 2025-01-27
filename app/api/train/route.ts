@@ -7,7 +7,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin"
 import { REPLICATE_USERNAME } from "@/constants/replicate"
 import { SITE_URL } from "@/constants/site"
 
-import { decrementUserCredits } from "@/actions/balance"
+import { decrementUserCredits } from "@/actions/profile"
 import { CREDITS_COST } from "@/constants/cost"
 
 const replicate = new Replicate({

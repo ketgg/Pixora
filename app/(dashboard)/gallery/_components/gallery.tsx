@@ -26,7 +26,7 @@ const Gallery = ({ images }: Props) => {
         items={images}
         config={{
           columns: [1, 2, 3, 4],
-          gap: [16, 12, 8, 8],
+          gap: [16, 12, 12, 12],
           media: [640, 768, 1024, 1280],
         }}
         render={(img, idx) => {

@@ -25,7 +25,10 @@ import { Badge } from "@/components/ui/badge"
 import { Database } from "@/types/database"
 
 import { cn } from "@/lib/utils"
+
 import DeleteModelDialog from "./delete-dialog"
+
+import { statusColor } from "@/constants/status"
 
 type Props = {
   modelsData: {
@@ -33,14 +36,6 @@ type Props = {
     success: boolean
     data: Database["public"]["Tables"]["Models"]["Row"][] | null
   }
-}
-
-const statusColor = {
-  FAILED: "text-failed bg-failed-alt border-failed-border",
-  SUCCEEDED: "text-succeeded bg-succeeded-alt border-succeeded-border",
-  PROCESSING: "text-processing bg-processing-alt border-processing-border",
-  CANCELED: "text-canceled bg-canceled-alt border-canceled-border",
-  STARTING: "text-muted-foreground",
 }
 
 const ModelsList = ({ modelsData }: Props) => {
@@ -74,7 +69,7 @@ const ModelsList = ({ modelsData }: Props) => {
         items={models || []}
         config={{
           columns: [1, 2, 3, 4],
-          gap: [16, 12, 8, 8],
+          gap: [16, 16, 16, 16],
           media: [640, 1024, 1280, 1440],
         }}
         render={(model) => {

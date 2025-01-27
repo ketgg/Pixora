@@ -8,7 +8,7 @@ import {
 import { AppSidebar } from "./_components/app-sidebar"
 import { AppBreadcrumb } from "./_components/app-breadcrumb"
 
-import { getUserBalance } from "@/actions/balance"
+import { getUserBalance } from "@/actions/profile"
 
 export default function DashboardLayout({
   children,

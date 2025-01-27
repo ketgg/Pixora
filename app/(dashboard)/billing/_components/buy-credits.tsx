@@ -38,10 +38,10 @@ const BuyCredits = (props: Props) => {
                       >{`Save ${pack.discount}$`}</Badge>
                     )}
                   </CardTitle>
-                  <div className="flex items-center gap-2 font-freigeist">
+                  <div className="flex items-end gap-1 font-freigeist">
                     <h2 className="text-3xl">${pack.price}</h2>
 
-                    <span className="flex">{`(${pack.credits} credits)`}</span>
+                    <span className="flex pb-0.5">{`/ ${pack.credits} credits`}</span>
                   </div>
                   <CardDescription>{pack.description}</CardDescription>
                 </CardHeader>

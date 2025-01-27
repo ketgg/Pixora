@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { createClient } from "@/lib/supabase/server"
 
-import { getUserBalance } from "@/actions/balance"
+import { getUserBalance } from "@/actions/profile"
 
 export async function AppSidebar({
   ...props

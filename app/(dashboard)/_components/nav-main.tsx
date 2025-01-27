@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
 
-import { getUserBalance } from "@/actions/balance"
+import { getUserBalance } from "@/actions/profile"
 
 import { cn } from "@/lib/utils"
 
