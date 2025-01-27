@@ -9,6 +9,7 @@ import PixoraModelTrainingResultEmail, {
 } from "@/components/resend/pixora-email-template"
 
 import { Database } from "@/types/database"
+import { updateModelsTrained } from "@/actions/model"
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -221,7 +222,7 @@ const statusHandlers = {
 export const POST = async (request: Request) => {
   try {
     const body = await request.json()
-    console.log("@WEBHOOK_BODY", body)
+    // console.log("@WEBHOOK_BODY", body)
 
     const url = new URL(request.url)
     const userId = url.searchParams.get("user-id") ?? ""
@@ -255,6 +256,11 @@ export const POST = async (request: Request) => {
         filePath,
         body,
       })
+      // Update modelsTrained, For now we increment models trained irrespective of the status.
+      const { success, error } = await updateModelsTrained(1)
+      if (error) {
+        throw new Error(error)
+      }
     } else {
       console.error(`Unknown status: ${body.status}`)
     }
