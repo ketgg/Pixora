@@ -86,9 +86,7 @@ const ReviewCard = ({
   )
 }
 
-type Props = {}
-
-const Testimonials = (props: Props) => {
+const Testimonials = () => {
   return (
     <section id="testimonials" className="border-b">
       <div className="container-wrapper">

@@ -6,8 +6,6 @@ import { cn } from "@/lib/utils"
 
 import { AnimatedGradientText } from "../ui/animated-gradient-text"
 
-type Props = {}
-
 const features = [
   {
     title: "AI-Powered Photos",
@@ -29,7 +27,7 @@ const features = [
   },
 ]
 
-const Features = (props: Props) => {
+const Features = () => {
   return (
     <section id="features" className="border-b">
       <div className="container-wrapper bg-muted">

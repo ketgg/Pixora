@@ -1,19 +1,15 @@
 import Link from "next/link"
 import Image from "next/image"
-import { redirect } from "next/navigation"
 
 import React from "react"
-import { RiArrowRightSLine, RiArrowRightLine } from "@remixicon/react"
+import { RiArrowRightSLine } from "@remixicon/react"
 
 import { cn } from "@/lib/utils"
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text"
-import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 
 import { Marquee } from "../ui/marquee"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
-
-type Props = {}
 
 const avatars = [
   { src: "/avatars/01.jpg", fallback: "CN" },
@@ -100,7 +96,7 @@ const MarqueeColumn = ({
   )
 }
 
-const Hero = (props: Props) => {
+const Hero = () => {
   return (
     <section className="border-b">
       <div className="container-wrapper relative">
@@ -122,9 +118,9 @@ const Hero = (props: Props) => {
             Transform your photos with the power of AI
           </h1>
           <p className="max-w-3xl text-sm text-neutral-800 md:text-base lg:text-lg">
-            From LinkedIn headshots to Instagram influencer photos, Pixora's
-            state-of-the-art technology ensures you always look your best.
-            Create, edit and generate images effortlessly.
+            From LinkedIn headshots to Instagram influencer photos,
+            Pixora&apos;s state-of-the-art technology ensures you always look
+            your best. Create, edit and generate images effortlessly.
           </p>
           <div className="flex flex-col items-center gap-2 xs:flex-row">
             <div className="flex items-center -space-x-4 overflow-hidden">

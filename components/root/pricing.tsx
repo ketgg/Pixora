@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 
 import React from "react"
@@ -22,9 +21,7 @@ import { cn } from "@/lib/utils"
 
 import { AnimatedGradientText } from "../ui/animated-gradient-text"
 
-type Props = {}
-
-const Pricing = (props: Props) => {
+const Pricing = () => {
   return (
     <section id="pricing" className="border-b">
       <div className="container-wrapper bg-muted">

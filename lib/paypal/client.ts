@@ -1,9 +1,6 @@
 import {
-  ApiError,
-  CheckoutPaymentIntent,
   Client,
   Environment,
-  LogLevel,
   OrdersController,
   PaymentsController,
 } from "@paypal/paypal-server-sdk"

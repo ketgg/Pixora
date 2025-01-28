@@ -2,9 +2,7 @@ import Link from "next/link"
 import React from "react"
 import { RiHeartFill } from "@remixicon/react"
 
-type Props = {}
-
-const Footer = (props: Props) => {
+const Footer = () => {
   return (
     <section id="footer" className="border-b">
       <div className="container-wrapper">

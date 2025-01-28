@@ -9,11 +9,9 @@ import SignInForm from "./signin-form"
 import SignUpForm from "./signup-form"
 import ResetPasswordForm from "./reset-pass-form"
 
-type Props = {}
-
 type Mode = "signin" | "signup" | "reset"
 
-const AuthForm = (props: Props) => {
+const AuthForm = () => {
   const [mode, setMode] = useState<Mode>("signin")
   return (
     <div className="space-y-6">

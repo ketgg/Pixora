@@ -31,9 +31,7 @@ const formSchema = z.object({
   }),
 })
 
-type Props = {}
-
-const SignInForm = (props: Props) => {
+const SignInForm = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const toastId = useId()
 
@@ -53,7 +51,7 @@ const SignInForm = (props: Props) => {
     formData.append("email", values.email)
     formData.append("password", values.password)
 
-    const { data, success, error } = await signIn(formData)
+    const { success, error } = await signIn(formData)
     if (!success) {
       toast.error(error ?? "Failed to Sign In.", { id: toastId })
       setLoading(false)

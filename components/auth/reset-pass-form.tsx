@@ -25,9 +25,7 @@ const formSchema = z.object({
   }),
 })
 
-type Props = {}
-
-const ResetPasswordForm = (props: Props) => {
+const ResetPasswordForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

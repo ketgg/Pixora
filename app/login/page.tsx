@@ -10,9 +10,7 @@ import AuthForm from "@/components/auth/auth-form"
 
 import { getUser } from "@/actions/auth"
 
-type Props = {}
-
-const LoginPage = async (props: Props) => {
+const LoginPage = async () => {
   const user = await getUser()
   if (user) redirect("/home")
   return (

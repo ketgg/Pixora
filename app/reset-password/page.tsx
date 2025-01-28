@@ -7,9 +7,7 @@ import ResetPasswordForm from "./_components/reset-password-form"
 
 import LoginBackground from "@/assets/images/bg-image.png"
 
-type Props = {}
-
-const ResetPasswordPage = async (props: Props) => {
+const ResetPasswordPage = async () => {
   return (
     <main className="relative h-screen min-w-72 sm:grid sm:grid-cols-2">
       <section className="relative hidden w-full bg-muted p-8 text-foreground sm:flex sm:flex-col">

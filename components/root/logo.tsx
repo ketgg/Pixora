@@ -2,9 +2,7 @@ import Link from "next/link"
 import React from "react"
 import { RiCameraLensAiFill } from "@remixicon/react"
 
-type Props = {}
-
-const Logo = (props: Props) => {
+const Logo = () => {
   return (
     <Link href="/" className="flex items-center gap-2">
       <RiCameraLensAiFill size={32} />

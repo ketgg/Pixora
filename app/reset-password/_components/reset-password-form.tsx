@@ -44,9 +44,7 @@ const formSchema = z
     path: ["confirmPassword"],
   })
 
-type Props = {}
-
-const ResetPasswordForm = (props: Props) => {
+const ResetPasswordForm = () => {
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
   const toastId = useId()

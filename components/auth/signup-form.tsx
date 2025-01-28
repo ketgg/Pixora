@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 
 import React, { useId, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { set, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { toast } from "sonner"
 import { RiLoader4Line } from "@remixicon/react"
@@ -49,9 +49,7 @@ const formSchema = z
     path: ["confirmPassword"],
   })
 
-type Props = {}
-
-const SignUpForm = (props: Props) => {
+const SignUpForm = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const toastId = useId()
 
@@ -74,7 +72,7 @@ const SignUpForm = (props: Props) => {
     formData.append("email", values.email)
     formData.append("password", values.password)
 
-    const { data, success, error } = await signUp(formData)
+    const { success } = await signUp(formData)
     if (!success) {
       toast.error("Failed to Sign Up", { id: toastId })
       setLoading(false)

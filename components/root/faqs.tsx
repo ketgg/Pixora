@@ -1,15 +1,4 @@
-import Link from "next/link"
-
 import React from "react"
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 
 import { cn } from "@/lib/utils"
 
@@ -65,9 +54,7 @@ const Question = ({
   )
 }
 
-type Props = {}
-
-const Faqs = (props: Props) => {
+const Faqs = () => {
   return (
     <section id="faqs" className="border-b">
       <div className="container-wrapper">

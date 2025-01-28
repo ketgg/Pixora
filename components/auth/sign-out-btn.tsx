@@ -4,9 +4,7 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "@/actions/auth"
 
-type Props = {}
-
-const SignOutBtn = (props: Props) => {
+const SignOutBtn = () => {
   const handleOnClick = async () => {
     await signOut()
   }
