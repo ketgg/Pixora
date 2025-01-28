@@ -34,7 +34,7 @@ const RecentImages = ({ images }: RecentImagesProps) => {
     return (
       <Card className="col-span-full rounded-lg shadow-sm lg:col-span-2">
         <CardHeader>
-          <CardTitle>Recent Generations</CardTitle>
+          <CardTitle className="font-medium">Recent Generations</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center">
           <p className="text-muted-foreground">No images generated yet.</p>
@@ -45,7 +45,7 @@ const RecentImages = ({ images }: RecentImagesProps) => {
   return (
     <Card className="col-span-full rounded-lg shadow-sm lg:col-span-2">
       <CardHeader>
-        <CardTitle>Recent Generations</CardTitle>
+        <CardTitle className="font-medium">Recent Generations</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Carousel className="w-full">

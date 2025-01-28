@@ -21,7 +21,7 @@ export const PACKS: PackType[] = [
     discount: 5,
     description: "For regular creators and small businesses.",
     features: [
-      "Generate ~2500 images with Schnell model.",
+      "Generate ~2,500 images with Schnell model.",
       "Generate ~500 images with Dev or Custom model.",
       "Train ~7-8 custom models.",
     ],

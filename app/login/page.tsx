@@ -3,7 +3,7 @@ import Image from "next/image"
 
 import React from "react"
 
-import Logo from "@/components/logo"
+import Logo from "@/components/root/logo"
 
 import LoginBackground from "@/assets/images/bg-image.png"
 import AuthForm from "@/components/auth/auth-form"
@@ -29,7 +29,7 @@ const LoginPage = async (props: Props) => {
         <div className="relative flex items-center">
           <Logo />
         </div>
-        <div className="relative z-20 mt-auto font-freigeist font-medium">
+        <div className="font-grotesk relative z-20 mt-auto font-medium">
           <blockquote className="space-y-2">
             <p className="">
               &ldquo; Pixora is just fantastic! I take amazing photos of my

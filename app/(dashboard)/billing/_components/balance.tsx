@@ -15,7 +15,7 @@ const Balance = async (props: Props) => {
     )
   }
   return (
-    <section className="flex items-center gap-2 font-freigeist text-base">
+    <section className="font-grotesk flex items-center gap-2 text-base">
       <span className="">Your Credits</span>
       <Badge
         variant="secondary"

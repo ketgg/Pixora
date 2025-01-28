@@ -48,13 +48,13 @@ const SecuritySettings = ({ user }: Props) => {
   return (
     <Card className="max-w-4xl rounded-lg shadow-none">
       <CardHeader className="">
-        <CardTitle className="font-freigeist text-lg font-normal">
+        <CardTitle className="font-grotesk text-lg font-normal">
           Security
         </CardTitle>
         <CardDescription>Change your password</CardDescription>
       </CardHeader>
       <CardContent className="">
-        <Button onClick={handleResetPassword}>Change password</Button>
+        <Button onClick={handleResetPassword}>Change Password</Button>
       </CardContent>
     </Card>
   )

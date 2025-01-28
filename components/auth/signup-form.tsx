@@ -154,7 +154,7 @@ const SignUpForm = (props: Props) => {
           )}
         />
         <Button type="submit" disabled={loading}>
-          {loading && <RiLoader4Line size={16} className="mr-2 animate-spin" />}
+          {loading && <RiLoader4Line size={16} className="mr-1 animate-spin" />}
           Sign Up
         </Button>
       </form>

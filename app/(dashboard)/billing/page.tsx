@@ -8,7 +8,7 @@ const BillingPage = (props: Props) => {
   return (
     <main className="flex w-full flex-col space-y-6 px-4 pb-4 pt-1 md:px-4">
       <header className="flex flex-col gap-1">
-        <h1 className="font-freigeist text-2xl">Pricing & Billing</h1>
+        <h1 className="font-grotesk text-2xl">Pricing & Billing</h1>
         <h2 className="text-sm text-muted-foreground">
           Manage and buy credits.
         </h2>
@@ -16,7 +16,7 @@ const BillingPage = (props: Props) => {
       </header>
       <Balance />
       <section className="">
-        <h3 className="font-freigeist text-lg">How credits work?</h3>
+        <h3 className="font-grotesk text-lg">How credits work?</h3>
         <div className="mt-2 text-sm text-muted-foreground">
           <ul className="list-disc pl-6">
             <li>
@@ -36,7 +36,7 @@ const BillingPage = (props: Props) => {
       </section>
 
       <section className="">
-        <h3 className="font-freigeist text-lg">Credit costs for services</h3>
+        <h3 className="font-grotesk text-lg">Credit costs for services</h3>
         <p className="mt-2 text-sm">Here's how many credits each task costs:</p>
         <div className="mt-2 text-sm text-muted-foreground">
           {/* Image Generation Costs */}

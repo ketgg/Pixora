@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import React from "react"
+import { RiMagicLine, RiBankCardLine, RiBox3Line } from "@remixicon/react"
 import {
   Card,
   CardContent,
@@ -9,14 +10,16 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { RiMagicLine, RiBankCardLine, RiBox3Line } from "@remixicon/react"
+
+import { cn } from "@/lib/utils"
+
 type Props = {}
 
 const QuickActions = (props: Props) => {
   return (
     <Card className="flex-1 rounded-lg shadow-sm">
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Quick Actions</CardTitle>
+        <CardTitle className={cn("font-medium")}>Quick Actions</CardTitle>
         <CardDescription>Get started with common actions</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
@@ -31,7 +34,7 @@ const QuickActions = (props: Props) => {
           </Link>
         </Button>
         <Button asChild className="w-full" variant="secondary">
-          <Link href="/blling">
+          <Link href="/billing">
             <RiBankCardLine size={16} /> Biling
           </Link>
         </Button>

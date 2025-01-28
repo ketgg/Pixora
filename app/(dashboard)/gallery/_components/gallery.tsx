@@ -15,7 +15,7 @@ type Props = {
 const Gallery = ({ images }: Props) => {
   if (images.length === 0) {
     return (
-      <div className="flex font-freigeist text-muted-foreground">
+      <div className="font-grotesk flex text-muted-foreground">
         No Images Found
       </div>
     )
@@ -38,7 +38,7 @@ const Gallery = ({ images }: Props) => {
               >
                 <div className="absolute inset-0 z-10 bg-black opacity-0 transition-opacity duration-200 group-hover:opacity-70">
                   <div className="flex h-full items-center justify-center">
-                    <p className="font-freigeist text-lg text-primary-foreground">
+                    <p className="font-grotesk text-lg text-primary-foreground">
                       View Details
                     </p>
                   </div>

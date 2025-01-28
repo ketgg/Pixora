@@ -32,9 +32,7 @@ export function NavLogo({
             <data.logo className="size-5" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-freigeist font-bold">
-              {data.name}
-            </span>
+            <span className="font-grotesk truncate font-bold">{data.name}</span>
             <span className="truncate text-xs">{data.plan}</span>
           </div>
         </SidebarMenuButton>

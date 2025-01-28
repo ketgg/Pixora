@@ -46,7 +46,7 @@ const OutputImages = (props: Props) => {
                   {loading ? (
                     <Skeleton className="h-full w-full" />
                   ) : (
-                    <span className="font-freigeist text-base">
+                    <span className="font-grotesk text-base">
                       No images generated
                     </span>
                   )}

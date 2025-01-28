@@ -84,7 +84,7 @@ const ResetPasswordForm = (props: Props) => {
   return (
     <div className="space-y-6">
       <header className="flex flex-col space-y-1 text-center">
-        <h1 className="font-freigeist text-2xl font-semibold tracking-tight">
+        <h1 className="font-grotesk text-2xl font-semibold tracking-tight">
           Reset Password
         </h1>
         <p className="text-sm text-muted-foreground">Update your password</p>

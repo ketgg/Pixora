@@ -1,7 +1,5 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
-import { Geist, Geist_Mono } from "next/font/google"
-
 import NextTopLoader from "nextjs-toploader"
 
 import "@/styles/globals.css"
@@ -17,77 +15,33 @@ import {
   RiInformation2Fill,
 } from "@remixicon/react"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-})
-
-const neueFreigeist = localFont({
-  src: [
-    {
-      path: "../assets/fonts/NeueFreigeist-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../assets/fonts/NeueFreigeist-Medium.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../assets/fonts/NeueFreigeist-SemiBold.woff2",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../assets/fonts/NeueFreigeist-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-neue-freigeist",
-})
-
-const basierSquare = localFont({
-  src: [
-    {
-      path: "../assets/fonts/BasierSquare-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../assets/fonts/BasierSquare-RegularItalic.woff2",
-      weight: "400",
-      style: "italic",
-    },
-    {
-      path: "../assets/fonts/BasierSquare-SemiBold.woff2",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../assets/fonts/BasierSquare-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-basier-square",
-})
-
 const jetBrainsMono = localFont({
   src: [
     {
-      path: "../assets/fonts/JetBrainsMono-Regular.woff2",
+      path: "../assets/fonts/JetBrains/JetBrainsMono-Regular.woff2",
       weight: "400",
       style: "normal",
     },
   ],
   variable: "--font-jetbrains-mono",
+})
+
+const agrandirNormal = localFont({
+  src: "../assets/fonts/Agrandir/PPAgrandirNormal-Variable.ttf",
+  variable: "--font-agrandir-normal",
+})
+const agrandirNarrow = localFont({
+  src: "../assets/fonts/Agrandir/PPAgrandirNarrow-Variable.ttf",
+  variable: "--font-agrandir-narrow",
+})
+const agrandirText = localFont({
+  src: "../assets/fonts/Agrandir/PPAgrandirText-Variable.ttf",
+  variable: "--font-agrandir-text",
+})
+
+const mori = localFont({
+  src: "../assets/fonts/Mori/PPMori-VariableVF.woff2",
+  variable: "--font-mori",
 })
 
 export const metadata: Metadata = {
@@ -102,10 +56,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="">
       <PayPalProvider>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${neueFreigeist.variable} ${basierSquare.variable} ${jetBrainsMono.variable} mx-auto min-w-80 max-w-[120rem] font-sans antialiased`}
+          className={`${mori.variable} ${agrandirText.variable} ${agrandirNarrow.variable} ${agrandirNormal.variable} ${jetBrainsMono.variable} mx-auto min-w-80 font-sans antialiased`}
         >
           <NextTopLoader
             color="#101010"
@@ -128,7 +82,7 @@ export default function RootLayout({
               loading: <RiLoader4Line className="animate-spin" />,
             }}
             toastOptions={{
-              className: "rounded-none font-freigeist",
+              className: "rounded-none font-grotesk",
             }}
           />
         </body>

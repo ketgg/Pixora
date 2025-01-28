@@ -500,7 +500,7 @@ const TrainModelForm = (props: Props) => {
         </div>
         <Accordion className="mb-4 mt-2" type="single" collapsible>
           <AccordionItem value="item-1">
-            <AccordionTrigger className="font-freigeist text-base">
+            <AccordionTrigger className="font-grotesk text-base">
               Show advanced inputs
             </AccordionTrigger>
             <AccordionContent className="space-y-6 pt-2">
@@ -773,7 +773,7 @@ const TrainModelForm = (props: Props) => {
           </Button>
           <Button disabled={false} type="submit">
             {false && <RiLoader4Line className="animate-spin" />}
-            {false ? "Running" : "Create training"}
+            {false ? "Running" : "Create Training"}
           </Button>
         </div>
       </form>

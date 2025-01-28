@@ -28,7 +28,9 @@ export default function DashboardLayout({
             </div>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 pt-0">{children}</div>
+        <div className="flex max-w-[120rem] flex-1 flex-col gap-4 pt-0">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )

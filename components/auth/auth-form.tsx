@@ -18,7 +18,7 @@ const AuthForm = (props: Props) => {
   return (
     <div className="space-y-6">
       <header className="flex flex-col space-y-1 text-center">
-        <h1 className="font-freigeist text-2xl font-semibold tracking-tight">
+        <h1 className="font-grotesk text-2xl font-semibold tracking-tight">
           {mode === "signin" && "Sign In"}
           {mode === "reset" && "Reset password"}
           {mode === "signup" && "Sign Up"}
@@ -34,7 +34,7 @@ const AuthForm = (props: Props) => {
         {mode === "signin" && (
           <>
             <SignInForm />
-            <div className="xs:flex-row xs:items-center flex flex-col items-start justify-between">
+            <div className="flex flex-col items-start justify-between xs:flex-row xs:items-center">
               <Button
                 onClick={() => [setMode("signup")]}
                 variant="link"

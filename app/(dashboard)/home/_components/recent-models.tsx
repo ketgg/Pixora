@@ -28,11 +28,11 @@ const RecentModels = ({ models }: Props) => {
   return (
     <Card className="flex-1 rounded-lg shadow-sm">
       <CardHeader>
-        <CardTitle className="text-sm font-semibold">Recent Models</CardTitle>
+        <CardTitle className="text-sm font-medium">Recent Models</CardTitle>
         {/* <CardDescription>Your recently trained models</CardDescription> */}
       </CardHeader>
       <CardContent className="grid gap-4">
-        <div className="grid gap-4 font-freigeist">
+        <div className="font-grotesk grid gap-4">
           {models.length === 0 ? (
             <p>No models trained yet.</p>
           ) : (

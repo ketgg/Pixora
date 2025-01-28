@@ -19,7 +19,7 @@ type Props = {}
 const BuyCredits = (props: Props) => {
   return (
     <section className="flex w-full flex-col space-y-4">
-      <h2 className="font-freigeist text-lg font-semibold">Available Packs</h2>
+      <h2 className="font-grotesk text-lg font-semibold">Available Packs</h2>
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
         {PACKS.map((pack) => {
           return (
@@ -29,7 +29,7 @@ const BuyCredits = (props: Props) => {
             >
               <div>
                 <CardHeader className="flex flex-col gap-1">
-                  <CardTitle className="flex justify-between font-freigeist text-xl font-light">
+                  <CardTitle className="font-grotesk flex justify-between text-xl font-light">
                     {pack.name}
                     {pack.discount && (
                       <Badge
@@ -38,7 +38,7 @@ const BuyCredits = (props: Props) => {
                       >{`Save ${pack.discount}$`}</Badge>
                     )}
                   </CardTitle>
-                  <div className="flex items-end gap-1 font-freigeist">
+                  <div className="font-grotesk flex items-end gap-1">
                     <h2 className="text-3xl">${pack.price}</h2>
 
                     <span className="flex pb-0.5">{`/ ${pack.credits} credits`}</span>

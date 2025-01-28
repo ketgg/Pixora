@@ -8,7 +8,7 @@ const Logo = (props: Props) => {
   return (
     <Link href="/" className="flex items-center gap-2">
       <RiCameraLensAiFill size={32} />
-      <span className="font-freigeist text-lg font-semibold">Pixora</span>
+      <span className="font-grotesk text-lg font-semibold">Pixora</span>
     </Link>
   )
 }

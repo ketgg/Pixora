@@ -55,7 +55,7 @@ const SheetWrapper = ({ img, children }: Props) => {
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="flex w-full max-w-full flex-col gap-2 sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle className="font-freigeist">Image Details</SheetTitle>
+          <SheetTitle className="font-grotesk">Image Details</SheetTitle>
         </SheetHeader>
         <ScrollArea className="h-[100vh]">
           <div className="flex flex-col gap-2">
@@ -66,7 +66,7 @@ const SheetWrapper = ({ img, children }: Props) => {
                 width={img.WIDTH || 0}
                 height={img.HEIGHT || 0}
               />
-              <div className="flex gap-2 font-freigeist">
+              <div className="font-grotesk flex gap-2">
                 <Button
                   onClick={handleDownload}
                   variant="default"
@@ -88,7 +88,7 @@ const SheetWrapper = ({ img, children }: Props) => {
               className="flex items-center gap-1 text-sm font-normal"
             >
               <span className="font-mono">prompt:</span>
-              <span className="font-freigeist">{img.prompt}</span>
+              <span className="font-grotesk">{img.prompt}</span>
             </Badge>
             <div className="flex flex-wrap gap-2 font-mono">
               <Badge
@@ -96,37 +96,35 @@ const SheetWrapper = ({ img, children }: Props) => {
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">model:</span>
-                <span className="font-freigeist">{modelName}</span>
+                <span className="font-grotesk">{modelName}</span>
               </Badge>
               <Badge
                 variant={"outline"}
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">output_format:</span>
-                <span className="font-freigeist">{img.outputFormat}</span>
+                <span className="font-grotesk">{img.outputFormat}</span>
               </Badge>
               <Badge
                 variant={"outline"}
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">aspect_ratio:</span>
-                <span className="font-freigeist">{img.aspectRatio}</span>
+                <span className="font-grotesk">{img.aspectRatio}</span>
               </Badge>
               <Badge
                 variant={"outline"}
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">output_quality:</span>
-                <span className="font-freigeist">{img.outputQuality}</span>
+                <span className="font-grotesk">{img.outputQuality}</span>
               </Badge>
               <Badge
                 variant={"outline"}
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">num_inference_steps:</span>
-                <span className="font-freigeist">
-                  {img.numOfInferenceSteps}
-                </span>
+                <span className="font-grotesk">{img.numOfInferenceSteps}</span>
               </Badge>
               {img.modelName === "black-forest-labs/flux-dev" && (
                 <Badge
@@ -134,7 +132,7 @@ const SheetWrapper = ({ img, children }: Props) => {
                   className="flex items-center gap-1 text-sm font-normal"
                 >
                   <span className="font-mono">guidance:</span>
-                  <span className="font-freigeist">{img.guidance}</span>
+                  <span className="font-grotesk">{img.guidance}</span>
                 </Badge>
               )}
               <Badge
@@ -142,7 +140,7 @@ const SheetWrapper = ({ img, children }: Props) => {
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">go_fast:</span>
-                <span className="font-freigeist">
+                <span className="font-grotesk">
                   {img.goFast ? "true" : "false"}
                 </span>
               </Badge>
@@ -151,7 +149,7 @@ const SheetWrapper = ({ img, children }: Props) => {
                 className="flex items-center gap-1 text-sm font-normal"
               >
                 <span className="font-mono">megapixels:</span>
-                <span className="font-freigeist">{img.megapixels}</span>
+                <span className="font-grotesk">{img.megapixels}</span>
               </Badge>
             </div>
           </div>

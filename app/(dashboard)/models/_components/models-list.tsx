@@ -46,7 +46,7 @@ const ModelsList = ({ modelsData }: Props) => {
     return (
       <Card className="mx-auto flex max-w-2xl flex-col rounded-lg shadow-none">
         <CardHeader>
-          <CardTitle className="font-freigeist text-lg">
+          <CardTitle className="font-grotesk text-lg">
             No models found
           </CardTitle>
           <CardDescription>
@@ -82,7 +82,7 @@ const ModelsList = ({ modelsData }: Props) => {
           return (
             <Card className="flex w-full flex-col gap-4 rounded-lg p-4 shadow-none">
               <CardHeader className="flex flex-col gap-0 space-y-0 p-0">
-                <CardTitle className="flex items-center justify-between font-freigeist text-xl">
+                <CardTitle className="font-grotesk flex items-center justify-between text-xl">
                   {model.modelName}
                   <div className="flex items-center gap-2">
                     {status && (

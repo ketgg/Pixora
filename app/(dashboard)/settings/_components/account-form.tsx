@@ -68,7 +68,7 @@ const AccountForm = ({ user }: Props) => {
   return (
     <Card className="max-w-4xl rounded-lg shadow-none">
       <CardHeader className="pb-4">
-        <CardTitle className="font-freigeist text-lg font-normal">
+        <CardTitle className="font-grotesk text-lg font-normal">
           Profile
         </CardTitle>
         <CardDescription>Update your personal information</CardDescription>
